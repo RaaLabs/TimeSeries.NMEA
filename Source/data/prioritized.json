@@ -1,0 +1,175 @@
+{
+    "Latitude": {
+        "priority": [
+            "GPGGA",
+            "GPGLL",
+            "GPGNS",
+            "GPRMC",
+            "GPRMA"
+        ],
+        "threshold": 60000
+    },
+    "Longitude": {
+        "priority": [
+            "GPGGA",
+            "GPGLL",
+            "GPGNS",
+            "GPRMC",
+            "GPRMA"
+        ],
+        "threshold": 60000
+    },
+    "Position": {
+        "priority": [
+            "GPGGA",
+            "GPGLL",
+            "GPGNS",
+            "GPRMC",
+            "GPRMA"
+        ],
+        "threshold": 60000
+    },
+    "RateOfTurn": {
+        "priority": [
+            "HEROT",
+            "GPROT"
+        ],
+        "threshold": 60000
+    },
+    "GPSsatellites": {
+        "priority": [
+            "GPGNS",
+            "GPGGA"
+        ],
+        "threshold": 60000
+    },
+    "HDOP": {
+        "priority": [
+            "GPGNS",
+            "GPGGA"
+        ],
+        "threshold": 60000
+    },    
+    "SpeedOverGround": {
+        "priority": [
+            "GPVTG",
+            "GPRMC",
+            "GPRMA",
+            "SDVTG"
+        ],
+        "threshold": 60000
+    },
+    "SpeedThroughWater": {
+        "priority": [
+            "VDVHW",
+            "VDVBW",
+            "GPVHW",
+            "GPVBW",
+            "VWVHW",
+            "VWVBW"
+        ],
+        "threshold": 60000
+    },
+    "HeadingMagnetic": {
+        "priority": [
+            "HCHDG",
+            "HCHDM",
+            "HCVHW",
+            "GPHDG",
+            "GPHDM",
+            "GPVHW"
+        ],
+        "threshold": 60000
+    },
+    "HeadingTrue": {
+        "priority": [
+            "HEHDT",
+            "HEVHW",
+            "GPHDT",
+            "GPVHW",
+            "SDHDT",
+            "SDVHW"
+        ],
+        "threshold": 60000
+    },
+    "WindAngleTrue": {
+        "priority": [
+            "WIMWV",
+            "IIMWV"
+        ],
+        "threshold": 60000
+    },
+    "WindSpeedTrue": {
+        "priority": [
+            "WIMWV",
+            "IIMWV"
+        ],
+        "threshold": 60000
+    },
+    "WindAngleRelative": {
+        "priority": [
+            "WIMWV",
+            "IIMWV"
+        ],
+        "threshold": 60000
+    },
+    "WindSpeedRelative": {
+        "priority": [
+            "WIMWV",
+            "IIMWV"
+        ],
+        "threshold": 60000
+    },
+    "LongitudinalSpeedThroughWater": {
+        "priority": [
+            "VDVBW",
+            "GPVBW"
+        ],
+        "threshold": 60000
+    },
+    "TransverseSpeedThroughWater": {
+        "priority": [
+            "VDVBW",
+            "GPVBW"
+        ],
+        "threshold": 60000
+    },
+    "LongitudinalSpeedOverGround": {
+        "priority": [
+            "VDVBW",
+            "GPVBW"
+        ],
+        "threshold": 60000
+    },
+    "TransverseSpeedOverGround": {
+        "priority": [
+            "VDVBW",
+            "GPVBW"
+        ],
+        "threshold": 60000
+    },
+    "CourseOverGroundTrue": {
+        "priority": [
+            "GPVTG"
+        ],
+        "threshold": 60000
+    },
+    "CourseOverGroundMagnetic": {
+        "priority": [
+            "GPVTG"
+        ],
+        "threshold": 60000
+    },
+    "DepthBelowKeel": {
+        "priority": [
+            "SDDPT"
+        ],
+        "threshold": 60000
+    },
+    "WaterDepth": {
+        "priority": [
+            "SDDPT"
+        ],
+        "threshold": 60000
+    }
+}
