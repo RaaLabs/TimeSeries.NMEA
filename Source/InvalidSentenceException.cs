@@ -8,13 +8,13 @@ namespace RaaLabs.Edge.Connectors.NMEA
     /// <summary>
     /// Exception that gets thrown if a sentence is in the invalid format
     /// </summary>
-    public class InvalidSentence : Exception
+    public class InvalidSentenceException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="InvalidSentence"/>
+        /// Initializes a new instance of <see cref="InvalidSentenceException"/>
         /// </summary>
         /// <param name="sentence">The invalid sentence</param>
-        public InvalidSentence(string sentence) : base($"Sentence '{sentence}' is invalid. Please refer to the standard for NMEA.")
+        public InvalidSentenceException(string sentence) : base($"Sentence '{sentence}' is invalid. Please refer to the standard for NMEA.")
         {
 
         }

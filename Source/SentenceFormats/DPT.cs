@@ -38,7 +38,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                 }
                 else
                 {
-                    throw new InvalidSentence($"DPT: Unable to parse '{waterDepthRelativeToTransducer}' and/or '{offsetFromTransducer}'");
+                    throw new InvalidSentenceException($"DPT: Unable to parse '{waterDepthRelativeToTransducer}' and/or '{offsetFromTransducer}'");
                 }
             }
         }

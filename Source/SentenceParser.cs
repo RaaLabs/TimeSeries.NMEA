@@ -113,17 +113,17 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
         void ThrowIfSentenceIsInvalid(string sentence)
         {
-            if (!IsValidSentence(sentence)) throw new InvalidSentence(sentence);
+            if (!IsValidSentence(sentence)) throw new InvalidSentenceException(sentence);
         }
 
         void ThrowIfUnsupportedSentence(string sentence, string talker, string identifier)
         {
-            if (!_formats.ContainsKey($"{identifier}")) throw new UnsupportedSentence(sentence, talker, identifier);
+            if (!_formats.ContainsKey($"{identifier}")) throw new UnsupportedSentenceException(sentence, talker, identifier);
         }
 
         void ThrowIfSentenceChecksumIsInvalid(string sentence, byte actualChecksum, byte expectedChecksum)
         {
-            if (expectedChecksum != actualChecksum) throw new InvalidSentenceChecksum(actualChecksum, expectedChecksum, sentence);
+            if (expectedChecksum != actualChecksum) throw new InvalidSentenceChecksumException(actualChecksum, expectedChecksum, sentence);
         }
     }
 }
