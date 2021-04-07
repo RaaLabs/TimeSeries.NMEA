@@ -11,7 +11,7 @@ using System.Reflection;
 namespace RaaLabs.Edge.Connectors.NMEA
 {
     [ExcludeFromCodeCoverage]
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
