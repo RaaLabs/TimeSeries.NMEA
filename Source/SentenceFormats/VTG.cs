@@ -14,6 +14,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 
         /// <inheritdoc/>
         public string Identitifer => "VTG";
+        readonly Parser parser = new Parser();
+
 
         /// <inheritdoc/>
 
@@ -23,14 +25,9 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var courseOverGroundMagnetic = values[2];
             var speedOverGround = values[4];
 
-            if (ValidSentence(courseOverGroundTrue)) yield return new TagWithData("CourseOverGroundTrue", float.Parse(courseOverGroundTrue, CultureInfo.InvariantCulture.NumberFormat));
-            if (ValidSentence(courseOverGroundMagnetic)) yield return new TagWithData("CourseOverGroundMagnetic", float.Parse(courseOverGroundMagnetic, CultureInfo.InvariantCulture.NumberFormat));
-            if (ValidSentence(speedOverGround)) yield return new TagWithData("SpeedOverGround", float.Parse(speedOverGround, CultureInfo.InvariantCulture.NumberFormat) * 1852 / 3600);
-        }
-
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
+            if (parser.ValidSentenceValue(courseOverGroundTrue)) yield return new TagWithData("CourseOverGroundTrue", parser.StringToDouble(courseOverGroundTrue));
+            if (parser.ValidSentenceValue(courseOverGroundMagnetic)) yield return new TagWithData("CourseOverGroundMagnetic", parser.StringToDouble(courseOverGroundMagnetic));
+            if (parser.ValidSentenceValue(speedOverGround)) yield return new TagWithData("SpeedOverGround", parser.StringToDouble(speedOverGround) * 1852 / 3600);
         }
     }
 }

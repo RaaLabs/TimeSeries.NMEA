@@ -14,6 +14,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 
         /// <inheritdoc/>
         public string Identitifer => "VHW";
+        readonly Parser parser = new Parser();
+
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
@@ -22,14 +24,9 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var headingMagnetic = values[2];
             var speedThroughWater = values[4];
 
-            if(ValidSentence(headingTrue)) yield return  new TagWithData("HeadingTrue", float.Parse(headingTrue, CultureInfo.InvariantCulture.NumberFormat));
-            if(ValidSentence(headingMagnetic)) yield return  new TagWithData("HeadingMagnetic", float.Parse(headingMagnetic, CultureInfo.InvariantCulture.NumberFormat));
-            if(ValidSentence(speedThroughWater)) yield return  new TagWithData("SpeedThroughWater", float.Parse(speedThroughWater, CultureInfo.InvariantCulture.NumberFormat)*1852 / 3600);
-        }
-
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
+            if(parser.ValidSentenceValue(headingTrue)) yield return  new TagWithData("HeadingTrue", parser.StringToDouble(headingTrue));
+            if(parser.ValidSentenceValue(headingMagnetic)) yield return  new TagWithData("HeadingMagnetic", parser.StringToDouble(headingMagnetic));
+            if(parser.ValidSentenceValue(speedThroughWater)) yield return  new TagWithData("SpeedThroughWater", parser.StringToDouble(speedThroughWater)*1852 / 3600);
         }
 
     }

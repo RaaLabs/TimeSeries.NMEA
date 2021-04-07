@@ -12,7 +12,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
     {
 
         /// <inheritdoc/>
-        public string Identitifer => "DPT";
+        public string Identitifer => "DPT";        
+        readonly Parser parser = new Parser();
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
@@ -21,7 +22,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var waterDepthRelativeToTransducer = values[0];
             var offsetFromTransducer = values[1];
 
-            if (ValidSentence(waterDepthRelativeToTransducer))
+            if (parser.ValidSentenceValue(waterDepthRelativeToTransducer))
             {
                 if (offsetFromTransducer.Contains("-"))
                 {
@@ -41,9 +42,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                 }
             }
         }
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
-        }
+     
     }
 }

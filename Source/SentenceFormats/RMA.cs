@@ -14,6 +14,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 
         /// <inheritdoc/>
         public string Identitifer => "RMA";
+        readonly Parser parser = new Parser();
+
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
@@ -24,47 +26,13 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var cardinalDirectionX = values[4];
             var speedOverGround = values[7];
 
-            if (ValidSentence(speedOverGround)) yield return new TagWithData("SpeedOverGround", float.Parse(speedOverGround, CultureInfo.InvariantCulture.NumberFormat) * 1852 / 3600);
+            if (parser.ValidSentenceValue(speedOverGround)) yield return new TagWithData("SpeedOverGround", parser.StringToDouble(speedOverGround) * 1852 / 3600);
 
-            if (ValidSentence(latitude) && ValidSentence(cardinalDirectionY))
+            var positionTags = parser.ParsePosition(latitude, longitude, cardinalDirectionX, cardinalDirectionY);
+            foreach (var datapoint in positionTags)
             {
-                var latitudeDeg = ConvertToDegree(latitude);
-                if (cardinalDirectionY == "S") latitudeDeg = -latitudeDeg;
-                yield return new TagWithData("Latitude", latitudeDeg);
-
-            }
-            if (ValidSentence(longitude) && ValidSentence(cardinalDirectionX))
-            {
-                var longitudeDeg = ConvertToDegree(longitude);
-                if (cardinalDirectionX == "W") longitudeDeg = -longitudeDeg;
-                yield return new TagWithData("Longitude", longitudeDeg);
-            }
-
-            if (ValidSentence(latitude) && ValidSentence(cardinalDirectionY) && ValidSentence(longitude) && ValidSentence(cardinalDirectionX))
-            {
-                var latitudeDeg = ConvertToDegree(latitude);
-                var longitudeDeg = ConvertToDegree(longitude);
-
-                if (cardinalDirectionY == "S") latitudeDeg = -latitudeDeg;
-                if (cardinalDirectionX == "W") longitudeDeg = -longitudeDeg;
-
-                yield return new TagWithData("Position", new Coordinate(latitudeDeg, longitudeDeg));
+                yield return new TagWithData(datapoint.Tag, datapoint.Data);
             }
         }
-
-        private float ConvertToDegree(string value)
-        {
-            var length = value.Split(".")[0].Length;
-            var _degree = value.Substring(0, length - 2);
-            var _decimal = value.Substring(length - 2);
-            var result = float.Parse(_degree, CultureInfo.InvariantCulture.NumberFormat) + float.Parse(_decimal, CultureInfo.InvariantCulture.NumberFormat) / 60;
-
-            return result;
-        }
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
-        }
-
     }
 }

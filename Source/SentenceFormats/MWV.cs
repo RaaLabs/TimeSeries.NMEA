@@ -9,11 +9,13 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
     /// <summary>
     /// Represents the format of "Wind Speed and Angle"
     /// </summary>
-    public class MWV : ISentenceFormat
+    public class MWV : Parser, ISentenceFormat
     {
 
         /// <inheritdoc/>
         public string Identitifer => "MWV";
+        readonly Parser parser = new Parser();
+
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
@@ -29,19 +31,14 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                 windUnit = "WindSpeedRelative";
             }
 
-
-            if (ValidSentence(windAngle)) yield return new TagWithData(windAngleName, float.Parse(windAngle, CultureInfo.InvariantCulture.NumberFormat));
-            if (ValidSentence(windSpeed))
+            if (parser.ValidSentenceValue(windAngle)) yield return new TagWithData(windAngleName, parser.StringToDouble(windAngle));
+            if (parser.ValidSentenceValue(windSpeed))
             {
-                var windSpeedValue = float.Parse(windSpeed, CultureInfo.InvariantCulture.NumberFormat);
+                var windSpeedValue = parser.StringToDouble(windSpeed);
                 if (values[3] == "K") windSpeedValue = windSpeedValue * 1000 / 3600;
                 if (values[3] == "N") windSpeedValue = windSpeedValue * 1852 / 3600;
                 yield return new TagWithData(windUnit, windSpeedValue);
             }
-        }
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
         }
     }
 }

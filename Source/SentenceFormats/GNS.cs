@@ -13,6 +13,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
     {
         /// <inheritdoc/>
         public string Identitifer => "GNS";
+        readonly Parser parser = new Parser();
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
@@ -24,46 +25,14 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var gpsSatellites = values[6];
             var hdop = values[7];
 
-            if (ValidSentence(gpsSatellites)) yield return new TagWithData("GPSsatellites", float.Parse(gpsSatellites, CultureInfo.InvariantCulture.NumberFormat));
-            if (ValidSentence(hdop)) yield return new TagWithData("HDOP", float.Parse(hdop, CultureInfo.InvariantCulture.NumberFormat));
+            if (parser.ValidSentenceValue(gpsSatellites)) yield return new TagWithData("GPSsatellites", parser.StringToDouble(gpsSatellites));
+            if (parser.ValidSentenceValue(hdop)) yield return new TagWithData("HDOP", parser.StringToDouble(hdop));
 
-            if (ValidSentence(latitude) && ValidSentence(cardinalDirectionY))
+            var positionTags = parser.ParsePosition(latitude, longitude, cardinalDirectionX, cardinalDirectionY);
+            foreach (var datapoint in positionTags)
             {
-                var latitudeDeg = ConvertToDegree(latitude);
-                if (cardinalDirectionY == "S") latitudeDeg = -latitudeDeg;
-                yield return new TagWithData("Latitude", latitudeDeg);
-
-            }
-            if (ValidSentence(longitude) && ValidSentence(cardinalDirectionX))
-            {
-                var longitudeDeg = ConvertToDegree(longitude);
-                if (cardinalDirectionX == "W") longitudeDeg = -longitudeDeg;
-                yield return new TagWithData("Longitude", longitudeDeg);
-            }
-
-            if (ValidSentence(latitude) && ValidSentence(cardinalDirectionY) && ValidSentence(longitude) && ValidSentence(cardinalDirectionX))
-            {
-                var latitudeDeg = ConvertToDegree(latitude);
-                var longitudeDeg = ConvertToDegree(longitude);
-                if (cardinalDirectionY == "S") latitudeDeg = -latitudeDeg;
-                if (cardinalDirectionX == "W") longitudeDeg = -longitudeDeg;
-                yield return new TagWithData("Position", new Coordinate(latitudeDeg, longitudeDeg));
+                yield return new TagWithData(datapoint.Tag, datapoint.Data);
             }
         }
-
-        private float ConvertToDegree(string value)
-        {
-            var length = value.Split(".")[0].Length;
-            var _degree = value.Substring(0, length - 2);
-            var _decimal = value.Substring(length - 2);
-            var result = float.Parse(_degree, CultureInfo.InvariantCulture.NumberFormat) + float.Parse(_decimal, CultureInfo.InvariantCulture.NumberFormat) / 60;
-
-            return result;
-        }
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
-        }
-
     }
 }

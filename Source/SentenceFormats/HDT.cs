@@ -14,17 +14,13 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 
         /// <inheritdoc/>
         public string Identitifer => "HDT";
+        readonly Parser parser = new Parser();
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
         {
             var headingTrue = values[0];
-            if (ValidSentence(headingTrue)) yield return new TagWithData("HeadingTrue", float.Parse(headingTrue, CultureInfo.InvariantCulture.NumberFormat));
-        }
-
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
+            if (parser.ValidSentenceValue(headingTrue)) yield return new TagWithData("HeadingTrue", parser.StringToDouble(headingTrue));
         }
     }
 }
