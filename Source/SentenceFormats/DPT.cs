@@ -1,10 +1,7 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using System;
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
-using RaaLabs.Edge.Connectors.NMEA.events;
 
 namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
@@ -31,8 +28,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                     name = "DepthBelowKeel";
                 }
 
-                bool waterDepthParsed = float.TryParse(waterDepthRelativeToTransducer, out float waterDepth);
-                bool offsetParsed = float.TryParse(offsetFromTransducer, out float offset);
+                var waterDepthParsed = float.TryParse(waterDepthRelativeToTransducer, out float waterDepth);
+                var offsetParsed = float.TryParse(offsetFromTransducer, out float offset);
 
                 if (waterDepthParsed && offsetParsed)
                 {

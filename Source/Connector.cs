@@ -1,7 +1,7 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+
 using Polly;
 using RaaLabs.Edge.Modules.EventHandling;
 using Serilog;
@@ -71,7 +71,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         private async Task TcpConnect()
         {
             IPAddress address = IPAddress.Parse(_configuration.Ip);
-            int port = _configuration.Port;
+            var port = _configuration.Port;
 
             Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(address, port);

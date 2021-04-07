@@ -1,10 +1,8 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
 using System.Globalization;
-using RaaLabs.Edge.Connectors.NMEA.events;
 
 namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
@@ -36,8 +34,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             if (ValidSentence(windSpeed))
             {
                 var windSpeedValue = float.Parse(windSpeed, CultureInfo.InvariantCulture.NumberFormat);
-                if (values[3] == "K") windSpeedValue = (windSpeedValue * 1000) / 3600;
-                if (values[3] == "N") windSpeedValue = (windSpeedValue * 1852) / 3600;
+                if (values[3] == "K") windSpeedValue = windSpeedValue * 1000 / 3600;
+                if (values[3] == "N") windSpeedValue = windSpeedValue * 1852 / 3600;
                 yield return new TagWithData(windUnit, windSpeedValue);
             }
         }

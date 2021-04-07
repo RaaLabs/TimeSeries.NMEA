@@ -1,3 +1,6 @@
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Connectors.NMEA.events
@@ -20,7 +23,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.events
         /// <summary>
         /// Represents the value for the NMEA tag
         /// </summary>
-        public dynamic value { get; set; }
+        public dynamic  value { get; set; }
 
         /// <summary>
         /// Represents the timestamp for the NMEA tag in epoc

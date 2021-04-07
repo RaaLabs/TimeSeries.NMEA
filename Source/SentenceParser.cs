@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -82,7 +81,10 @@ namespace RaaLabs.Edge.Connectors.NMEA
                 for (var i = 0; i < sentence.Length; i++) calculatedChecksum ^= (byte)sentence[i];
                 ThrowIfSentenceChecksumIsInvalid(sentence, checksum, calculatedChecksum);
             }
-            else sentence = sentence.Substring(1);
+            else
+            {
+                sentence = sentence.Substring(1);
+            }
 
             var values = sentence.Substring(6).Split(',');
             var result = _formats[identifier].Parse(values);

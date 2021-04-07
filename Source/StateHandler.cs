@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
 using System.Linq;
 using RaaLabs.Edge.Modules.EventHandling;
@@ -44,8 +43,8 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// </summary>
         public void Handle(events.EventParsed @event)
         {
-            string tagWithTalker = $"{@event.tag}.{@event.talker}";
-            string tag = @event.tag;
+            var tagWithTalker = $"{@event.tag}.{@event.talker}";
+            var tag = @event.tag;
 
             var measurement = new Measurement
             {
@@ -55,20 +54,20 @@ namespace RaaLabs.Edge.Connectors.NMEA
                 source = tagWithTalker
             };
 
-            long timeout = _timeoutsForTags.GetValueOrDefault(tag);
-            bool hasCurrentState = _state.TryGetValue(tag, out Measurement currentState);
+            var timeout = _timeoutsForTags.GetValueOrDefault(tag);
+            var hasCurrentState = _state.TryGetValue(tag, out Measurement currentState);
             
             if (currentState == null) hasCurrentState = false;
 
-            long currentTimestamp = currentState?.timestamp ?? -1;
-            int currentPriority = hasCurrentState ? _prioritiesForFullTags.GetValueOrDefault(currentState.source, int.MaxValue) : int.MaxValue;
-            int thisPriority = _prioritiesForFullTags.GetValueOrDefault(tagWithTalker, int.MaxValue);
-            bool hasHigherPriority = thisPriority <= currentPriority;
-            bool hasPriorityChanged = thisPriority != currentPriority;
-            bool currentStateStale = (@event.timestamp - currentTimestamp) > timeout;
-            bool shouldSetState = !hasCurrentState || hasHigherPriority || currentStateStale;
+            var currentTimestamp = currentState?.timestamp ?? -1;
+            var currentPriority = hasCurrentState ? _prioritiesForFullTags.GetValueOrDefault(currentState.source, int.MaxValue) : int.MaxValue;
+            var thisPriority = _prioritiesForFullTags.GetValueOrDefault(tagWithTalker, int.MaxValue);
+            var hasHigherPriority = thisPriority <= currentPriority;
+            var hasPriorityChanged = thisPriority != currentPriority;
+            var currentStateStale = (@event.timestamp - currentTimestamp) > timeout;
+            var shouldSetState = !hasCurrentState || hasHigherPriority || currentStateStale;
 
-            bool hasOverlappingTalkersWithoutPriority = thisPriority == int.MaxValue && (hasCurrentState && !tagWithTalker.Equals(currentState.source));
+            var hasOverlappingTalkersWithoutPriority = thisPriority == int.MaxValue && hasCurrentState && !tagWithTalker.Equals(currentState.source);
 
             if (hasOverlappingTalkersWithoutPriority)
             {
@@ -77,7 +76,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
             if (hasPriorityChanged && shouldSetState && !string.IsNullOrEmpty(currentState?.source))
             {
-                string currentTalker = currentState.source.Split(".").LastOrDefault();
+                var currentTalker = currentState.source.Split(".").LastOrDefault();
                 _logger.Warning($"{@event.tag} changed priority from {currentTalker} to {@event.talker}");
             }
 

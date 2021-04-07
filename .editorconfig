@@ -34,7 +34,7 @@ indent_size = 2
 # check https://github.com/dotnet/roslyn/issues/50785#issuecomment-768606882
 # default to all on warning
 dotnet_analyzer_diagnostic.severity = warning
-file_header_template = Copyright (c) Raalabs. All rights reserved.\nLicensed under the MIT license. See LICENSE file in the project root for full license information.
+file_header_template = Copyright (c) RaaLabs. All rights reserved.\nLicensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #### .NET Conventions ####
 dotnet_sort_system_directives_first = true:error

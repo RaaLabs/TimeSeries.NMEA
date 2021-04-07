@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -25,7 +24,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 
             if(ValidSentence(headingTrue)) yield return  new TagWithData("HeadingTrue", float.Parse(headingTrue, CultureInfo.InvariantCulture.NumberFormat));
             if(ValidSentence(headingMagnetic)) yield return  new TagWithData("HeadingMagnetic", float.Parse(headingMagnetic, CultureInfo.InvariantCulture.NumberFormat));
-            if(ValidSentence(speedThroughWater)) yield return  new TagWithData("SpeedThroughWater", (float.Parse(speedThroughWater, CultureInfo.InvariantCulture.NumberFormat)*1852)/3600);
+            if(ValidSentence(speedThroughWater)) yield return  new TagWithData("SpeedThroughWater", float.Parse(speedThroughWater, CultureInfo.InvariantCulture.NumberFormat)*1852 / 3600);
         }
 
         private bool ValidSentence(string value)

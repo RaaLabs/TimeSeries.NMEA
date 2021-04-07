@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,7 +48,6 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
         private static async IAsyncEnumerable<byte> ReadAsync(Stream stream)
         {
-            Memory<byte> buffer = new Memory<byte>(new byte[1024]);
             byte[] bufferr = new byte[1024];
 
             while (true)

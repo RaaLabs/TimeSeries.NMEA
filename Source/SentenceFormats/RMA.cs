@@ -1,11 +1,8 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using System;
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
 using System.Globalization;
-using RaaLabs.Edge.Connectors.NMEA.events;
 
 namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
@@ -27,7 +24,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var cardinalDirectionX = values[4];
             var speedOverGround = values[7];
 
-            if (ValidSentence(speedOverGround)) yield return new TagWithData("SpeedOverGround", (float.Parse(speedOverGround, CultureInfo.InvariantCulture.NumberFormat) * 1852) / 3600);
+            if (ValidSentence(speedOverGround)) yield return new TagWithData("SpeedOverGround", float.Parse(speedOverGround, CultureInfo.InvariantCulture.NumberFormat) * 1852 / 3600);
 
             if (ValidSentence(latitude) && ValidSentence(cardinalDirectionY))
             {
