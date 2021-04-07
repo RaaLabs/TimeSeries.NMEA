@@ -13,7 +13,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
     /// <summary>
     /// 
     /// </summary>
-    public class NMEAStreamReader
+    public static class NMEAStreamReader
     {
         /// <summary>
         /// 
@@ -54,7 +54,6 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
             while (true)
             {
-                //var sizz = await stream.ReadAsync(bufferr, 0, 1024);
                 var sizz = await stream.ReadAsync(bufferr.AsMemory(0, 1024));
 
                 foreach (var i in Enumerable.Range(0, sizz))
