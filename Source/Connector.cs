@@ -23,23 +23,19 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// <inheritdoc/>
         public event EventEmitter<events.NMEASentenceReceived> NMEASentenceReceived;
         private readonly ConnectorConfiguration _configuration;
-        readonly SentenceParser _parser;
         private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Connector"/>
         /// </summary>
         /// <param name="configuration">The <see cref="ConnectorConfiguration">configuration</see></param>
-        /// <param name="parser"><see cref="SentenceParser"/> for parsing the NMEA sentences</param>
         /// <param name="logger"><see cref="ILogger"/> for logging</param>
         public Connector(
             ConnectorConfiguration configuration,
-            SentenceParser parser,
             ILogger logger)
         {
             _configuration = configuration;
             _logger = logger;
-            _parser = parser;
             _logger.Information($"Using protocol: {_configuration.Protocol}");
         }
 
@@ -123,10 +119,8 @@ namespace RaaLabs.Edge.Connectors.NMEA
             {
                 try
                 {
-                    var listenPort = _configuration.Port;
                     using (var udpClient = new UdpClient(_configuration.Port))
                     {
-                        var groupEP = new IPEndPoint(IPAddress.Any, _configuration.Port);
                         try
                         {
                             while (true)
