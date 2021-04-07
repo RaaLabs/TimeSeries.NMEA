@@ -33,7 +33,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                 float transverse = ValidSentence(transverseSpeedThroughWater) ? float.Parse(transverseSpeedThroughWater, CultureInfo.InvariantCulture.NumberFormat) : 0.0f;
                 float longitudinal = float.Parse(longitudinalSpeedThroughWater, CultureInfo.InvariantCulture.NumberFormat);
                 float speedThroughWater = (float) Math.Sqrt(Math.Pow(longitudinal, 2) + Math.Pow(transverse, 2));
-                yield return new TagWithData("SpeedThroughWater", (speedThroughWater * 1852) / 3600);
+                yield return new TagWithData("SpeedThroughWater", speedThroughWater * 1852 / 3600);
             }
   
         }

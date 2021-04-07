@@ -57,6 +57,9 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
             long timeout = _timeoutsForTags.GetValueOrDefault(tag);
             bool hasCurrentState = _state.TryGetValue(tag, out Measurement currentState);
+            
+            if (currentState == null) hasCurrentState = false;
+
             long currentTimestamp = currentState?.timestamp ?? -1;
             int currentPriority = hasCurrentState ? _prioritiesForFullTags.GetValueOrDefault(currentState.source, int.MaxValue) : int.MaxValue;
             int thisPriority = _prioritiesForFullTags.GetValueOrDefault(tagWithTalker, int.MaxValue);

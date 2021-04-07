@@ -98,7 +98,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         }
 
         /// <summary>
-        /// Helper method that can handle timeout for ValeTasks.
+        /// Helper method that can handle timeout for ValueTasks.
         /// </summary>
         async ValueTask<T> DoWithTimeout<T>(ValueTask<T> valueTask, int timeout)
         {
