@@ -16,10 +16,9 @@ namespace RaaLabs.Edge.Connectors.NMEA
     {
         /// <inheritdoc/>
         public event EventEmitter<events.NMEADatapointOutput> SendDatapoint;
-        private Dictionary<string, Measurement> _state = new Dictionary<string, Measurement>();
-        private Dictionary<string, int> _prioritiesForFullTags;
-        private Dictionary<string, long> _timeoutsForTags;
-
+        private readonly Dictionary<string, Measurement> _state = new Dictionary<string, Measurement>();
+        private readonly Dictionary<string, int> _prioritiesForFullTags;
+        private readonly Dictionary<string, long> _timeoutsForTags;
         private readonly ILogger _logger;
 
         /// <summary>
