@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TechTalk.SpecFlow;
+using FluentAssertions;
 
 namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps
 {
@@ -86,6 +87,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps
         {
             var verifier = _container.Resolve<IProducedEventVerifier<T>>();
             var emittedEvents = _emittedEvents[typeof(T)].Select(_ => (T) _).ToList();
+           
+            emittedEvents.Count.Should().Be(table.Rows.Count);
             foreach (var (@event, expected) in emittedEvents.Zip(table.Rows))
             {
                 verifier.VerifyFromTableRow(@event, expected);
