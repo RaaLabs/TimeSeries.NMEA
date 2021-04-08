@@ -1,5 +1,26 @@
 Feature: NMEALineHandler
 
+    Scenario: Handling incoming DPT events
+        Given a handler of type NMEALineHandler
+        When the following events of type NMEASentenceReceived is produced
+            | sentence               |
+            | $SDDPT,5.2,0.0,10.0*63 |
+
+        Then the following events of type EventParsed is produced
+            | Talker | Tag        | Value |
+            | SDDPT  | WaterDepth | 5.2   |
+
+    Scenario: Handling incoming GGA events
+        Given a handler of type NMEALineHandler
+        When the following events of type NMEASentenceReceived is produced
+            | sentence                                                              |
+            | $GPGGA,114757.00,4041.482,N,07408.271,W,1,08,01.0,+0022,M,-034,M,,*47 |
+
+        Then the following events of type EventParsed is produced
+            | Talker | Tag           | Value                                     |
+            | GPGGA  | GPSsatellites | 8.0                                       |
+            | GPGGA  | HDOP          | 1.0                                       |
+
     Scenario: Handling incoming RMC events
         Given a handler of type NMEALineHandler
         When the following events of type NMEASentenceReceived is produced
