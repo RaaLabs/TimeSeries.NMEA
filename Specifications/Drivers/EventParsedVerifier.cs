@@ -16,14 +16,13 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
     {
         public void VerifyFromTableRow(EventParsed @event, TableRow row)
         {
-
-
             if (@event.tag != "Position")
             {
                 float actualValue = @event.value;
+                var expectedValue = float.Parse(row["Value"], CultureInfo.InvariantCulture.NumberFormat);
                 @event.talker.Should().Be(row["Talker"]);
                 @event.tag.Should().Be(row["Tag"]);
-                actualValue.Should().BeApproximately(float.Parse(row["Value"], CultureInfo.InvariantCulture.NumberFormat), 0.0001f);
+                actualValue.Should().BeApproximately(expectedValue, 0.0001f);
             }
             else
             {
@@ -33,7 +32,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
                 latitude.Should().BeApproximately(expectedCoordinate.Latitude, 0.0001f);
                 longitude.Should().BeApproximately(expectedCoordinate.Longitude, 0.0001f);
             }
-
         }
     }
 }
