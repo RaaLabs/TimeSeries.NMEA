@@ -12,6 +12,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
         public TypeMapping()
         {
             Add("NMEALineHandler", typeof(NMEALineHandler));
+            Add("StateHandler", typeof(StateHandler));
             Add("NMEASentenceReceived", typeof(events.NMEASentenceReceived));
             Add("EventParsed", typeof(events.EventParsed));
             Add("NMEADatapointOutput", typeof(events.NMEADatapointOutput));

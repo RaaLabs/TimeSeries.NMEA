@@ -104,7 +104,12 @@ namespace RaaLabs.Edge.Connectors.NMEA
             return float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
         }
 
-        bool IsValidSentence(string sentence)
+        /// <summary>
+        /// Check if sentence is valid. Sentence should start with $ and should contain 6 char.
+        /// </summary>
+        /// <param name="sentence"></param>
+        /// <returns></returns>
+        public bool IsValidSentence(string sentence)
         {
             if (!sentence.StartsWith('$')) return false;
             if (sentence.Length < 6) return false;
