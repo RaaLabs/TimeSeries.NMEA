@@ -8,11 +8,24 @@ using Serilog;
 
 namespace RaaLabs.Edge.Connectors.NMEA
 {
-    class NMEALineHandler : IConsumeEvent<events.NMEASentenceReceived>, IProduceEvent<events.EventParsed>
+    /// <summary>
+    /// Layer for checking if events can be parsed. 
+    /// Events that can be parsed are emited as EventParsed
+    /// </summary>
+    public class NMEALineHandler : IConsumeEvent<events.NMEASentenceReceived>, IProduceEvent<events.EventParsed>
     {
+        /// <summary>
+        /// Initializes a new instance <see cref="events.EventParsed"/>
+        /// </summary>
         public event EventEmitter<events.EventParsed> EventParsed;
         private readonly ILogger _logger;
         private readonly SentenceParser _parser;
+
+        /// <summary>
+        /// Initializes a new instance <see cref="NMEALineHandler"/>
+        /// </summary>
+        /// <param name="parser"> <see cref="SentenceParser">formats</see></param>
+        /// <param name="logger"> <see cref="ILogger">formats</see> </param>
 
         public NMEALineHandler(SentenceParser parser, ILogger logger)
         {
@@ -20,6 +33,9 @@ namespace RaaLabs.Edge.Connectors.NMEA
             _parser = parser;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Handle(events.NMEASentenceReceived @event)
         {
             try
