@@ -16,7 +16,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// <param name="actualChecksum">The invalid checksum </param>
         /// <param name="expectedChecksum">The expected checksum</param>
         /// <param name="sentence">The invalid sentence</param>
-        public InvalidSentenceChecksumException(byte actualChecksum, byte expectedChecksum, string sentence) : base($"Checksum '{actualChecksum}' is invalid, expecting '{expectedChecksum}' for sentence '{sentence}'. Please refer to the standard for NMEA.")
+        public InvalidSentenceChecksumException(byte actualChecksum, byte expectedChecksum, string sentence) : base($"Checksum '{actualChecksum}' is invalid, expecting '{expectedChecksum}' for sentence '{sentence}'")
         {
 
         }
