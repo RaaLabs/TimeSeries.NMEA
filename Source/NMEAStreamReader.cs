@@ -40,9 +40,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
                 var lineString = Encoding.ASCII.GetString(line.ToArray());
                 yield return lineString;
-
                 line = new List<byte>();
-
             }
         }
 
