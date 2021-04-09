@@ -24,6 +24,8 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Hooks
         public void SetupIntanceFactory()
         {
             _container.RegisterTypeAs<NMEASentenceReceivedInstanceFactory, IEventInstanceFactory<NMEASentenceReceived>>();
+            _container.RegisterTypeAs<NMEADatapointOutputVerifier, IProducedEventVerifier<NMEADatapointOutput>>();
+            _container.RegisterTypeAs<EventParsedInstanceFactory, IEventInstanceFactory<EventParsed>>();
             _container.RegisterTypeAs<EventParsedVerifier, IProducedEventVerifier<EventParsed>>();
         }
 
