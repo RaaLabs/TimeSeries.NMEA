@@ -52,8 +52,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps
         public void ThenTheSentenceShould()
         {
             _validSentence.Should().Be(true);
-
         }
-
     }
 }
