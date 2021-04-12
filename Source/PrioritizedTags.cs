@@ -10,6 +10,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
     /// <summary>
     /// A map of prioritized talkers for all tags
     /// </summary>
+
     [Name("prioritized.json")]
     public class PrioritizedTags : ReadOnlyDictionary<string, SourcePriority>, IConfiguration
     {
