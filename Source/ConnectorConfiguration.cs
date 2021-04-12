@@ -2,12 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using RaaLabs.Edge.Modules.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RaaLabs.Edge.Connectors.NMEA
 {
     /// <summary>
     /// Represents the configuration of the NMEA connector
     /// </summary>
+    [ExcludeFromCodeCoverage] // Do not need to test configuration
     [Name("connector.json")]
     public class ConnectorConfiguration : IConfiguration
     {
