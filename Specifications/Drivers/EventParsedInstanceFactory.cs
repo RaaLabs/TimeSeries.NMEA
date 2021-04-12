@@ -19,7 +19,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
             {
                 talker = row["Identifier"],
                 tag = row["Tag"],
-                timestamp = long.Parse(row["Timestamp"]),
+                timestamp = long.Parse(row["Timestamp"], CultureInfo.InvariantCulture.NumberFormat),
                 value = float.Parse(row["Value"], CultureInfo.InvariantCulture.NumberFormat)
             };
             return eventParsed;

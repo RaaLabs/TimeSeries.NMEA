@@ -42,14 +42,12 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps
         [Then(@"the exception ""(.*)"" is thrown with message ""(.*)""")]
         public void ThenTheExeptionIsThrownWithMessage(string type, string message)
         {
-            Console.WriteLine(_exception.GetType().Name);
-            Console.WriteLine(_exception.Message);
             _exception.Message.Should().Be(message);
             _exception.GetType().Name.Should().Be(type);
         }
 
         [Then(@"the sentence should be valid")]
-        public void ThenTheSentenceShould()
+        public void ThenTheSentenceShouldBeValid()
         {
             _validSentence.Should().Be(true);
         }
