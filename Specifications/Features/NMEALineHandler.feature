@@ -51,14 +51,14 @@ Feature: NMEALineHandler
     Scenario: Handling incoming RMC events
         When the following events of type NMEASentenceReceived is produced
             | sentence                                                                 |
-            | $GPRMC,050318.004,A,5954.110,N,01043.074,E,038.9,241.4,090920,000.0,W*7A |
+            | $GPRMC,050318.004,A,5954.110,S,01043.074,E,038.9,241.4,090920,000.0,W*67 |
 
         Then the following events of type EventParsed is produced
             | Talker | Tag             | Value                                     |
             | GPRMC  | SpeedOverGround | 20.01189                                  |
-            | GPRMC  | Latitude        | 59.901833                                 |
+            | GPRMC  | Latitude        | -59.901833                                |
             | GPRMC  | Longitude       | 10.7179                                   |
-            | GPRMC  | Position        | {Latitude: 59.901833, Longitude: 10.7179} |
+            | GPRMC  | Position        | {Latitude: -59.901833, Longitude: 10.7179} |
 
     Scenario: Handling incoming HDT events
         When the following events of type NMEASentenceReceived is produced
@@ -115,6 +115,17 @@ Feature: NMEALineHandler
             | Talker | Tag                  | Value |
             | GPVTG  | CourseOverGroundTrue | 138.0 |
             | GPVTG  | SpeedOverGround      | 0.0   |
+
+    Scenario: Handling incoming VHW events
+        When the following events of type NMEASentenceReceived is produced
+            | sentence                                 |
+            | $VDVHW,119.9,T,120.1,M,7.76,N,14.37,K*72 |
+
+        Then the following events of type EventParsed is produced
+            | Talker | Tag               | Value   |
+            | VDVHW  | HeadingTrue       | 119.9   |
+            | VDVHW  | HeadingMagnetic   | 120.1   |
+            | VDVHW  | SpeedThroughWater | 3.99208 |
 
 
 
