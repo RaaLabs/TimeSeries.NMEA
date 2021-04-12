@@ -34,8 +34,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             {
                 yield return new TagWithData(datapoint.Tag, datapoint.Data);
             }
-
         }
-
     }
 }
