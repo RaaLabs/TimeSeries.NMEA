@@ -26,8 +26,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Hooks
             var assembly = typeof(ISentenceFormat).Assembly;
             var sentenceFormats = assembly.GetTypes().Where(type => typeof(ISentenceFormat).IsAssignableFrom(type) && !type.IsInterface);
             _container.RegisterFactoryAs<IEnumerable<ISentenceFormat>>(_ => sentenceFormats.Select(sentenceFormat => (ISentenceFormat) Activator.CreateInstance(sentenceFormat)) );
-            //var registerFunction = GetType().GetMethod("RegisterSentenceFormat");
-            //sentenceFormats.ToList().ForEach(sentenceFormat => registerFunction.MakeGenericMethod(sentenceFormat).Invoke(this, new object[]{}));
         }
 
         public void RegisterSentenceFormat<T>() where T : class, ISentenceFormat
