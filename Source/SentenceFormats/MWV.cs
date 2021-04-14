@@ -9,7 +9,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
     /// <summary>
     /// Represents the format of "Wind Speed and Angle"
     /// </summary>
-    public class MWV : Parser, ISentenceFormat
+    public class MWV : ISentenceFormat
     {
 
         /// <inheritdoc/>
