@@ -46,15 +46,15 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
         private static async IAsyncEnumerable<byte> ReadAsync(Stream stream)
         {
-            byte[] bufferr = new byte[1024];
+            byte[] buffer = new byte[1024];
 
             while (true)
             {
-                var sizz = await stream.ReadAsync(bufferr.AsMemory(0, 1024));
+                var size = await stream.ReadAsync(buffer.AsMemory(0, 1024));
 
-                foreach (var i in Enumerable.Range(0, sizz))
+                foreach (var i in Enumerable.Range(0, size))
                 {
-                    yield return bufferr[i];
+                    yield return buffer[i];
                 }
             }
         }
