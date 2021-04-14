@@ -16,9 +16,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
         public string Identitifer => "VTG";
         readonly Parser parser = new Parser();
 
-
         /// <inheritdoc/>
-
         public IEnumerable<TagWithData> Parse(string[] values)
         {
             var courseOverGroundTrue = values[0];
@@ -27,7 +25,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 
             if (parser.ValidSentenceValue(courseOverGroundTrue)) yield return new TagWithData("CourseOverGroundTrue", parser.StringToDouble(courseOverGroundTrue));
             if (parser.ValidSentenceValue(courseOverGroundMagnetic)) yield return new TagWithData("CourseOverGroundMagnetic", parser.StringToDouble(courseOverGroundMagnetic));
-            if (parser.ValidSentenceValue(speedOverGround)) yield return new TagWithData("SpeedOverGround", parser.StringToDouble(speedOverGround) * 1852 / 3600);
+            if (parser.ValidSentenceValue(speedOverGround)) yield return new TagWithData("SpeedOverGround", parser.KnotsToMps(speedOverGround));
         }
     }
 }

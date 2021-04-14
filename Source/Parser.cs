@@ -60,6 +60,30 @@ namespace RaaLabs.Edge.Connectors.NMEA
         {
             return float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
         }
+
+        /// <summary>
+        /// Convert knots to mps 
+        /// </summary>
+        /// <param name="value">string value from NMEA tag</param>
+        /// <returns>
+        /// float mps
+        /// </returns>
+        public float KnotsToMps(string value)
+        {
+            return (StringToDouble(value)*1852f)/3600;
+        }
+
+        /// <summary>
+        /// Convert kph to mps 
+        /// </summary>
+        /// <param name="value">string value from NMEA tag</param>
+        /// <returns>
+        /// float mps
+        /// </returns>
+        public float KphToMps(string value)
+        {
+            return (StringToDouble(value)*1000f)/3600;
+        }
         private float ConvertToDegree(string value)
         {
             var length = value.Split(".")[0].Length;

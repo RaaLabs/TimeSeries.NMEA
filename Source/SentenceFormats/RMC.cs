@@ -23,7 +23,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var cardinalDirectionX = values[5];
             var speedOverGround = values[6];
 
-            if (parser.ValidSentenceValue(speedOverGround)) yield return new TagWithData("SpeedOverGround", parser.StringToDouble(speedOverGround) * 1852 / 3600);
+            if (parser.ValidSentenceValue(speedOverGround)) yield return new TagWithData("SpeedOverGround",  parser.KnotsToMps(speedOverGround));
             
             var positionTags = parser.ParsePosition(latitude, longitude, cardinalDirectionX, cardinalDirectionY);
             foreach (var datapoint in positionTags)

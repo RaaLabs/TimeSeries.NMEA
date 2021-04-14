@@ -24,16 +24,16 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var longitudinalSpeedOverGround = values[3];
             var transverseSpeedOverGround = values[4];
 
-            if (parser.ValidSentenceValue(longitudinalSpeedThroughWater)) yield return new TagWithData("LongitudinalSpeedThroughWater", parser.StringToDouble(longitudinalSpeedThroughWater) * 1852 / 3600);
-            if (parser.ValidSentenceValue(transverseSpeedThroughWater)) yield return new TagWithData("TransverseSpeedThroughWater", parser.StringToDouble(transverseSpeedThroughWater) * 1852 / 3600);
-            if (parser.ValidSentenceValue(longitudinalSpeedOverGround)) yield return new TagWithData("LongitudinalSpeedOverGround", parser.StringToDouble(longitudinalSpeedOverGround) * 1852 / 3600);
-            if (parser.ValidSentenceValue(transverseSpeedOverGround)) yield return new TagWithData("TransverseSpeedOverGround", parser.StringToDouble(transverseSpeedOverGround) * 1852 / 3600);
+            if (parser.ValidSentenceValue(longitudinalSpeedThroughWater)) yield return new TagWithData("LongitudinalSpeedThroughWater", parser.KnotsToMps(longitudinalSpeedThroughWater));
+            if (parser.ValidSentenceValue(transverseSpeedThroughWater)) yield return new TagWithData("TransverseSpeedThroughWater", parser.KnotsToMps(transverseSpeedThroughWater));
+            if (parser.ValidSentenceValue(longitudinalSpeedOverGround)) yield return new TagWithData("LongitudinalSpeedOverGround", parser.KnotsToMps(longitudinalSpeedOverGround));
+            if (parser.ValidSentenceValue(transverseSpeedOverGround)) yield return new TagWithData("TransverseSpeedOverGround", parser.KnotsToMps(transverseSpeedOverGround));
             if (parser.ValidSentenceValue(longitudinalSpeedThroughWater)) 
             {
-                var transverse = parser.ValidSentenceValue(transverseSpeedThroughWater) ? parser.StringToDouble(transverseSpeedThroughWater) : 0.0f;
-                var longitudinal = parser.StringToDouble(longitudinalSpeedThroughWater);
+                var transverse = parser.ValidSentenceValue(transverseSpeedThroughWater) ? parser.KnotsToMps(transverseSpeedThroughWater) : 0.0f;
+                var longitudinal = parser.KnotsToMps(longitudinalSpeedThroughWater);
                 var speedThroughWater = (float) Math.Sqrt(Math.Pow(longitudinal, 2) + Math.Pow(transverse, 2));
-                yield return new TagWithData("SpeedThroughWater", speedThroughWater * 1852 / 3600);
+                yield return new TagWithData("SpeedThroughWater", speedThroughWater);
             }
         }
     }

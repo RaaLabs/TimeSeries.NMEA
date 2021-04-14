@@ -26,7 +26,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 
             if(parser.ValidSentenceValue(headingTrue)) yield return  new TagWithData("HeadingTrue", parser.StringToDouble(headingTrue));
             if(parser.ValidSentenceValue(headingMagnetic)) yield return  new TagWithData("HeadingMagnetic", parser.StringToDouble(headingMagnetic));
-            if(parser.ValidSentenceValue(speedThroughWater)) yield return  new TagWithData("SpeedThroughWater", parser.StringToDouble(speedThroughWater)*1852 / 3600);
+            if(parser.ValidSentenceValue(speedThroughWater)) yield return  new TagWithData("SpeedThroughWater", parser.KnotsToMps(speedThroughWater));
         }
 
     }
