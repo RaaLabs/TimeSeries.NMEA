@@ -51,7 +51,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
                 _logger.Information("Setting up TCP connector");
                 var policy = Policy
                     .Handle<Exception>()
-                    .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt),3600)),
                     (exception, timeSpan, context) =>
                     {
                         _logger.Error(exception, $"NMEA connector threw an exception during connect - retrying");
@@ -96,22 +96,6 @@ namespace RaaLabs.Edge.Connectors.NMEA
             }
         }
 
-        /// <summary>
-        /// Helper method that can handle timeout for ValueTasks.
-        /// </summary>
-        async ValueTask<T> DoWithTimeout<T>(ValueTask<T> valueTask, int timeout)
-        {
-            var task = valueTask.AsTask();
-            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
-            {
-                return await task;
-            }
-            else
-            {
-                throw new OperationCanceledException();
-            }
-        }
-
         private async Task ConnectUdp()
         {
             while (true)
@@ -143,5 +127,20 @@ namespace RaaLabs.Edge.Connectors.NMEA
             }
         }
 
+        /// <summary>
+        /// Helper method that can handle timeout for ValueTasks.
+        /// </summary>
+        async ValueTask<T> DoWithTimeout<T>(ValueTask<T> valueTask, int timeout)
+        {
+            var task = valueTask.AsTask();
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+            {
+                return await task;
+            }
+            else
+            {
+                throw new OperationCanceledException();
+            }
+        }
     }
 }
