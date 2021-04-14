@@ -42,7 +42,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                 {
                     case "K": windSpeedValue = parser.KphToMps(windSpeed); break;
                     case "N": windSpeedValue = parser.KnotsToMps(windSpeed); break;
-                    case "M": windSpeedValue = parser.StringToDouble(windSpeed);; break;
+                    case "M": windSpeedValue = parser.StringToDouble(windSpeed); break;
                     default: windSpeedValue = parser.StringToDouble(windSpeed); break;
                 }
                 yield return new TagWithData(windUnit, windSpeedValue);
