@@ -14,7 +14,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
     {
         public EventParsed FromTableRow(TableRow row)
         {
-
             var eventParsed = new events.EventParsed
             {
                 talker = row["Identifier"],
