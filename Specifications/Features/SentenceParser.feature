@@ -11,5 +11,5 @@ Feature: SentenceParser
     Scenario: Parse valid sentence with invalid checksum
         When sentence "$SDDPT,5.2,0.0,10.0*64" is parsed
         Then the sentence should be valid
-        And the exception "InvalidSentenceChecksumException" is thrown with message "Checksum '100' is invalid, expecting '99' for sentence 'SDDPT,5.2,0.0,10.0'"
+        And the exception "InvalidSentenceChecksumException" is thrown
     

@@ -39,10 +39,9 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps
             }
         }
 
-        [Then(@"the exception ""(.*)"" is thrown with message ""(.*)""")]
-        public void ThenTheExeptionIsThrownWithMessage(string type, string message)
+        [Then(@"the exception ""(.*)"" is thrown")]
+        public void ThenTheExeptionIsThrownWithMessage(string type)
         {
-            _exception.Message.Should().Be(message);
             _exception.GetType().Name.Should().Be(type);
         }
 
