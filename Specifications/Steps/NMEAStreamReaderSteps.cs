@@ -1,12 +1,5 @@
-using BoDi;
-using RaaLabs.Edge.Modules.EventHandling;
-using RaaLabs.Edge.Connectors.NMEA.Specs.Drivers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using TechTalk.SpecFlow;
-using FluentAssertions;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,13 +9,11 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps
     [Binding]
     public sealed class NMEAStreamReaderSteps
     {
-        private readonly IObjectContainer _container;
         private NMEAStreamReader _streamReader;
         private Stream _stream;
 
-        public NMEAStreamReaderSteps(IObjectContainer container, NMEAStreamReader streamReader)
+        public NMEAStreamReaderSteps(NMEAStreamReader streamReader)
         {
-            _container = container;
             _streamReader = streamReader;
         }
 
@@ -43,7 +34,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps
                 var line = reader.Current;
                 Console.WriteLine(line);
             }
-
         }
 
         async ValueTask<T> DoWithTimeout<T>(ValueTask<T> valueTask, int timeout)

@@ -1,15 +1,6 @@
 using BoDi;
-using RaaLabs.Edge.Modules.EventHandling;
-using RaaLabs.Edge.Connectors.NMEA.Specs.Drivers;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TechTalk.SpecFlow;
-using FluentAssertions;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
 
 namespace RaaLabs.Edge.Connectors.NMEA.Specs.Steps

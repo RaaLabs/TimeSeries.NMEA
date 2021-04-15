@@ -1,14 +1,8 @@
-using RaaLabs.Edge.Connectors.NMEA.events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Assist;
 using FluentAssertions;
 using System.Globalization;
 using Newtonsoft.Json;
+using RaaLabs.Edge.Connectors.NMEA.Events;
 
 namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
 {

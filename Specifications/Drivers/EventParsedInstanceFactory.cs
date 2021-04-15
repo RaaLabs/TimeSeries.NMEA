@@ -1,12 +1,6 @@
-using RaaLabs.Edge.Connectors.NMEA.events;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Assist;
+using RaaLabs.Edge.Connectors.NMEA.Events;
 
 namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
 {
@@ -14,7 +8,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
     {
         public EventParsed FromTableRow(TableRow row)
         {
-            var eventParsed = new events.EventParsed
+            var eventParsed = new Events.EventParsed
             {
                 talker = row["Identifier"],
                 tag = row["Tag"],
