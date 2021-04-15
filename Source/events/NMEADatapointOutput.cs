@@ -3,7 +3,7 @@
 
 using RaaLabs.Edge.Modules.EdgeHub;
 
-namespace RaaLabs.Edge.Connectors.NMEA.events
+namespace RaaLabs.Edge.Connectors.NMEA.Events
 {
     /// <summary>
     /// Implement outgoing event

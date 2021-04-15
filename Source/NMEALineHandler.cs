@@ -12,12 +12,12 @@ namespace RaaLabs.Edge.Connectors.NMEA
     /// Layer for checking if events can be parsed. 
     /// Events that can be parsed are emited as EventParsed
     /// </summary>
-    public class NMEALineHandler : IConsumeEvent<events.NMEASentenceReceived>, IProduceEvent<events.EventParsed>
+    public class NMEALineHandler : IConsumeEvent<Events.NMEASentenceReceived>, IProduceEvent<Events.EventParsed>
     {
         /// <summary>
-        /// Initializes a new instance <see cref="events.EventParsed"/>
+        /// Initializes a new instance <see cref="Events.EventParsed"/>
         /// </summary>
-        public event EventEmitter<events.EventParsed> EventParsed;
+        public event EventEmitter<Events.EventParsed> EventParsed;
         private readonly ILogger _logger;
         private readonly SentenceParser _parser;
 
@@ -36,7 +36,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// <summary>
         /// 
         /// </summary>
-        public void Handle(events.NMEASentenceReceived @event)
+        public void Handle(Events.NMEASentenceReceived @event)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
                     var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                     tags.ForEach(tag =>
                     {
-                        var output = new events.EventParsed
+                        var output = new Events.EventParsed
                         {
                             talker = identifier,
                             tag = tag.Tag,

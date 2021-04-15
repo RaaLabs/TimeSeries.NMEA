@@ -17,10 +17,10 @@ namespace RaaLabs.Edge.Connectors.NMEA
     /// <summary>
     /// 
     /// </summary>
-    public class Connector : IRunAsync, IProduceEvent<events.NMEASentenceReceived>
+    public class Connector : IRunAsync, IProduceEvent<Events.NMEASentenceReceived>
     {
         /// <inheritdoc/>
-        public event EventEmitter<events.NMEASentenceReceived> NMEASentenceReceived;
+        public event EventEmitter<Events.NMEASentenceReceived> NMEASentenceReceived;
         private readonly ConnectorConfiguration _configuration;
         private readonly ILogger _logger;
 

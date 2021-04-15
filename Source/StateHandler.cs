@@ -9,12 +9,12 @@ using Serilog;
 namespace RaaLabs.Edge.Connectors.NMEA
 {
     /// <summary>
-    /// StateHandler holds state for NMEA signals and emits events.
+    /// StateHandler holds state for NMEA signals and emits Events.
     /// </summary>
-    public class StateHandler : IConsumeEvent<events.EventParsed>, IProduceEvent<events.NMEADatapointOutput>
+    public class StateHandler : IConsumeEvent<Events.EventParsed>, IProduceEvent<Events.NMEADatapointOutput>
     {
         /// <inheritdoc/>
-        public event EventEmitter<events.NMEADatapointOutput> SendDatapoint;
+        public event EventEmitter<Events.NMEADatapointOutput> SendDatapoint;
         private readonly Dictionary<string, Measurement> _state = new Dictionary<string, Measurement>();
         private readonly Dictionary<string, int> _prioritiesForFullTags;
         private readonly Dictionary<string, long> _timeoutsForTags;
@@ -41,7 +41,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// Listens to EventParsed events and emmits NMEADatapointOutput
         /// Updates state if measuremens with higher priority are received
         /// </summary>
-        public void Handle(events.EventParsed @event)
+        public void Handle(Events.EventParsed @event)
         {
             var tagWithTalker = $"{@event.tag}.{@event.talker}";
             var tag = @event.tag;
@@ -83,7 +83,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
             if (shouldSetState)
             {
                 _state[tag] = measurement;
-                var output = new events.NMEADatapointOutput
+                var output = new Events.NMEADatapointOutput
                 {
                     source = "NMEA",
                     tag = @event.tag,

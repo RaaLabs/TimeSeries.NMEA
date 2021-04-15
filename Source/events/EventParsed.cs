@@ -3,7 +3,7 @@
 
 using RaaLabs.Edge.Modules.EventHandling;
 
-namespace RaaLabs.Edge.Connectors.NMEA.events
+namespace RaaLabs.Edge.Connectors.NMEA.Events
 {
     /// <summary>
     /// Implements event for EventParsed. See https://gpsd.gitlab.io/gpsd/NMEA.html for more information
