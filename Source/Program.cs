@@ -32,5 +32,4 @@ namespace RaaLabs.Edge.Connectors.NMEA
             await application.Run();
         }
     }
-
 }
