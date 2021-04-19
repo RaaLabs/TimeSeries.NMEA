@@ -1,13 +1,10 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
-using System.Linq;
-using RaaLabs.TimeSeries.DataTypes;
 using System;
 
-namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
+namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
     /// <summary>
     /// Represents the format of "Dual Ground/Water Speed (should probably implement only send if status is valid, see documentation)"
@@ -16,6 +13,8 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
     {
         /// <inheritdoc/>
         public string Identitifer => "VBW";
+        readonly Parser parser = new Parser();
+
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
@@ -25,22 +24,17 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
             var longitudinalSpeedOverGround = values[3];
             var transverseSpeedOverGround = values[4];
 
-            if (ValidSentence(longitudinalSpeedThroughWater)) yield return new TagWithData("LongitudinalSpeedThroughWater", (float.Parse(longitudinalSpeedThroughWater) * 1852) / 3600);
-            if (ValidSentence(transverseSpeedThroughWater)) yield return new TagWithData("TransverseSpeedThroughWater", (float.Parse(transverseSpeedThroughWater) * 1852) / 3600);
-            if (ValidSentence(longitudinalSpeedOverGround)) yield return new TagWithData("LongitudinalSpeedOverGround", (float.Parse(longitudinalSpeedOverGround) * 1852) / 3600);
-            if (ValidSentence(transverseSpeedOverGround)) yield return new TagWithData("TransverseSpeedOverGround", (float.Parse(transverseSpeedOverGround) * 1852) / 3600);
-            if (ValidSentence(longitudinalSpeedThroughWater)) 
+            if (parser.ValidSentenceValue(longitudinalSpeedThroughWater)) yield return new TagWithData("LongitudinalSpeedThroughWater", parser.KnotsToMps(longitudinalSpeedThroughWater));
+            if (parser.ValidSentenceValue(transverseSpeedThroughWater)) yield return new TagWithData("TransverseSpeedThroughWater", parser.KnotsToMps(transverseSpeedThroughWater));
+            if (parser.ValidSentenceValue(longitudinalSpeedOverGround)) yield return new TagWithData("LongitudinalSpeedOverGround", parser.KnotsToMps(longitudinalSpeedOverGround));
+            if (parser.ValidSentenceValue(transverseSpeedOverGround)) yield return new TagWithData("TransverseSpeedOverGround", parser.KnotsToMps(transverseSpeedOverGround));
+            if (parser.ValidSentenceValue(longitudinalSpeedThroughWater)) 
             {
-                float transverse = ValidSentence(transverseSpeedThroughWater) ? float.Parse(transverseSpeedThroughWater) : 0.0f;
-                float longitudinal = float.Parse(longitudinalSpeedThroughWater);
-                float speedThroughWater = (float) Math.Sqrt(Math.Pow(longitudinal, 2) + Math.Pow(transverse, 2));
-                yield return new TagWithData("SpeedThroughWater", (speedThroughWater * 1852) / 3600);
+                var transverse = parser.ValidSentenceValue(transverseSpeedThroughWater) ? parser.KnotsToMps(transverseSpeedThroughWater) : 0.0f;
+                var longitudinal = parser.KnotsToMps(longitudinalSpeedThroughWater);
+                var speedThroughWater = (float) Math.Sqrt(Math.Pow(longitudinal, 2) + Math.Pow(transverse, 2));
+                yield return new TagWithData("SpeedThroughWater", speedThroughWater);
             }
-  
-        }
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
         }
     }
 }

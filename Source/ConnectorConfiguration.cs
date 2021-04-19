@@ -1,17 +1,17 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using Dolittle.Configuration;
-using System.Collections.Generic;
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace RaaLabs.TimeSeries.NMEA
+using RaaLabs.Edge.Modules.Configuration;
+using System.Diagnostics.CodeAnalysis;
+
+namespace RaaLabs.Edge.Connectors.NMEA
 {
     /// <summary>
-    /// Represents the configuration for <see cref="Connector"/>
+    /// Represents the configuration of the NMEA connector
     /// </summary>
-    [Name("connector")]
-    public class ConnectorConfiguration : IConfigurationObject
+    [ExcludeFromCodeCoverage] // Do not need to test configuration
+    [Name("connector.json")]
+    public class ConnectorConfiguration : IConfiguration
     {
         /// <summary>
         /// Initializes a new instance of <see cref="ConnectorConfiguration"/>
@@ -35,7 +35,7 @@ namespace RaaLabs.TimeSeries.NMEA
         /// Gets the port that will be used for connecting
         /// </summary>
         public int Port { get; }
-
+        
         /// <summary>
         /// Gets the <see cref="Protocol"/> to use
         /// </summary>

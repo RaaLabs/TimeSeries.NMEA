@@ -1,148 +1,116 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Polly;
+using RaaLabs.Edge.Modules.EventHandling;
+using Serilog;
 using System;
-using System.Linq;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Dolittle.Collections;
-using Dolittle.Logging;
-using RaaLabs.TimeSeries.Modules;
-using RaaLabs.TimeSeries.Modules.Connectors;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace RaaLabs.TimeSeries.NMEA
+namespace RaaLabs.Edge.Connectors.NMEA
 {
     /// <summary>
-    /// Represents a <see cref="IAmAPullConnector">pull connector</see> for Modbus
+    /// 
     /// </summary>
-    public class Connector : IAmAStreamingConnector
+    public class Connector : IRunAsync, IProduceEvent<Events.NMEASentenceReceived>
     {
         /// <inheritdoc/>
-        public event DataReceived DataReceived = (tag, value, timestamp) => { };
-        readonly ConnectorConfiguration _configuration;
-        readonly ILogger _logger;
-        readonly ISentenceParser _parser;
-        readonly State _state;
+        public event EventEmitter<Events.NMEASentenceReceived> NMEASentenceReceived;
+        private readonly ConnectorConfiguration _configuration;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Connector"/>
         /// </summary>
         /// <param name="configuration">The <see cref="ConnectorConfiguration">configuration</see></param>
-        /// <param name="state">The <see cref="State">state</see></param>
-        /// <param name="parser"><see cref="ISentenceParser"/> for parsing the NMEA sentences</param>
         /// <param name="logger"><see cref="ILogger"/> for logging</param>
         public Connector(
             ConnectorConfiguration configuration,
-            State state,
-            ISentenceParser parser,
             ILogger logger)
         {
             _configuration = configuration;
-            _state = state;
             _logger = logger;
-            _parser = parser;
-
-            _state.StateChanged += StateChanged;
             _logger.Information($"Using protocol: {_configuration.Protocol}");
-
         }
 
-        /// <inheritdoc/>
-        public Source Name => "NMEA";
-
-        /// <inheritdoc/>
-        public void Connect()
-        {
-            switch (_configuration.Protocol)
-            {
-                case Protocol.Tcp: ConnectTcp(); break;
-                case Protocol.Udp: ConnectUdp(); break;
-                default: _logger.Error("Protocol not defined"); break;
-            }
-        }
-        void ConnectTcp()
+        /// <summary>
+        /// Implmentation of <see cref="IRunAsync"/>
+        /// </summary>
+        /// <returns>
+        /// NMEASentenceReceived <see cref="NMEASentenceReceived"/>
+        /// </returns>
+        public async Task Run()
         {
             while (true)
             {
-                TcpClient client = null;
+                _logger.Information("Setting up TCP connector");
+                var policy = Policy
+                    .Handle<Exception>()
+                    .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt),3600)),
+                    (exception, timeSpan, context) =>
+                    {
+                        _logger.Error(exception, $"NMEA connector threw an exception during connect - retrying");
+                    });
+
+                switch (_configuration.Protocol)
+                {
+                    case Protocol.Tcp: await policy.ExecuteAsync(async () => { await TcpConnect(); }); break;
+                    case Protocol.Udp: await policy.ExecuteAsync(async () => { await ConnectUdp(); }); break;
+                    default: _logger.Error("Protocol not defined"); break;
+                }
+                await Task.Delay(1000);
+            }
+        }
+
+        private async Task TcpConnect()
+        {
+            IPAddress address = IPAddress.Parse(_configuration.Ip);
+            var port = _configuration.Port;
+
+            Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(address, port);
+
+            using (var stream = new NetworkStream(socket, FileAccess.Read, true))
+            {
+                stream.ReadTimeout = 30_000;
+                var reader = NMEAStreamReader.ReadLineAsync(stream).GetAsyncEnumerator();
                 try
                 {
-                    _logger.Information($"Connecting to {_configuration.Ip}:{_configuration.Port}");
-                    client = new TcpClient(_configuration.Ip, _configuration.Port);
-                    using (var stream = client.GetStream())
+                    while (true)
                     {
-                        var started = false;
-                        var skip = false;
-                        var sentenceBuilder = new StringBuilder();
-                        for (;;)
-                        {
-                            var result = stream.ReadByte();
-                            if (result == -1) break;
-
-                            var character = (char)result;
-                            switch (character)
-                            {
-                                case '$':
-                                    started = true;
-                                    break;
-                                case '\n':
-                                    {
-                                        skip = true;
-                                        var sentence = sentenceBuilder.ToString();
-                                        sentenceBuilder = new StringBuilder();
-                                        try
-                                        {
-                                            ParseSentence(sentence);
-                                        }
-                                        catch (InvalidSentence ex)
-                                        {
-                                            _logger.Error(ex, "Unable to parse sentence");
-                                        }
-                                    }
-                                    break;
-                            }
-                            if (started && !skip) sentenceBuilder.Append(character);
-                            skip = false;
-                        }
+                        await DoWithTimeout(reader.MoveNextAsync(), 3_000);
+                        var sentence = reader.Current;
+                        NMEASentenceReceived(sentence);
                     }
                 }
-                catch (Exception ex)
+                finally
                 {
-                    client?.Close();
-                    _logger.Error(ex, "Error while connecting to TCP stream");
-                    Thread.Sleep(2000);
+                    _logger.Information("Done reading TCP stream");
+                    socket.Close();
                 }
             }
         }
-        void ConnectUdp()
+
+        private async Task ConnectUdp()
         {
             while (true)
             {
                 try
                 {
-                    var listenPort = _configuration.Port;
-                    using (var listener = new UdpClient(_configuration.Port))
+                    using (var udpClient = new UdpClient(_configuration.Port))
                     {
-                        var groupEP = new IPEndPoint(IPAddress.Any, _configuration.Port);
                         try
                         {
                             while (true)
                             {
-                                var sentenceBuilder = new StringBuilder();
-                                var bytes = listener.Receive(ref groupEP);
-                                var sentence = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
-                                try
-                                {
-                                    ParseSentence(sentence);
-                                }
-                                catch (InvalidSentence ex)
-                                {
-                                    _logger.Error(ex, "Unable to parse sentence");
-                                }
+                                var receivedResult = await udpClient.ReceiveAsync();
+                                var sentence = Encoding.ASCII.GetString(receivedResult.Buffer);
+                                NMEASentenceReceived(sentence);
                             }
                         }
                         catch (SocketException ex)
@@ -158,34 +126,21 @@ namespace RaaLabs.TimeSeries.NMEA
                 }
             }
         }
-        void ParseSentence(string sentence)
+
+        /// <summary>
+        /// Helper method that can handle timeout for ValueTasks.
+        /// </summary>
+        async ValueTask<T> DoWithTimeout<T>(ValueTask<T> valueTask, int timeout)
         {
-            if (_parser.CanParse(sentence))
+            var task = valueTask.AsTask();
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
             {
-                var identifier = _parser.GetIdentifierFor(sentence);
-                var output = _parser.Parse(sentence);
-                var timestamp = Timestamp.UtcNow;
-                output.ForEach(_ => _state.DataReceived(identifier, timestamp, _));
+                return await task;
+            }
+            else
+            {
+                throw new OperationCanceledException();
             }
         }
-
-        void StateChanged(TagWithData newData, Timestamp timestamp)
-        {
-            DataReceived(newData.Tag, newData.Data, timestamp);
-        }
-
-        /*
-        void ProcessTag(string identifier, Timestamp timestamp, TagWithData tagWithData)
-        {
-            var measurement = new Measurement
-            {
-                tagWithData = tagWithData,
-                timestamp = timestamp
-            };
-            var tag = $"{identifier}.{tagWithData.Tag}";
-            _measurements[tag] = measurement;
-            DataReceived($"{identifier}.{tagWithData.Tag}", tagWithData.Data, timestamp);
-        }
-        */
     }
 }

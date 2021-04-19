@@ -1,11 +1,10 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using System.Collections.Generic;
-using RaaLabs.TimeSeries.DataTypes;
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
+using System.Collections.Generic;
+using System.Globalization;
+
+namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
     /// <summary>
     /// Represents the format of "Wind Speed and Angle"
@@ -15,34 +14,39 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
 
         /// <inheritdoc/>
         public string Identitifer => "MWV";
+        readonly Parser parser = new Parser();
+
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
         {
             var windAngle = values[0];
+            var reference = values[1];
             var windSpeed = values[2];
+            var windSpeedUnit = values[3];
 
             var windAngleName = "WindAngleTrue";
             var windUnit = "WindSpeedTrue";
-            if (values[1] == "R")
+            if (reference == "R")
             {
                 windAngleName = "WindAngleRelative";
                 windUnit = "WindSpeedRelative";
             }
 
-
-            if (ValidSentence(windAngle)) yield return new TagWithData(windAngleName, float.Parse(windAngle));
-            if (ValidSentence(windSpeed))
+            if (parser.ValidSentenceValue(windAngle)) yield return new TagWithData(windAngleName, parser.StringToDouble(windAngle));
+            if (parser.ValidSentenceValue(windSpeed))
             {
-                var windSpeedValue = float.Parse(windSpeed);
-                if (values[3] == "K") windSpeedValue = (windSpeedValue * 1000) / 3600;
-                if (values[3] == "N") windSpeedValue = (windSpeedValue * 1852) / 3600;
+                
+                float windSpeedValue;
+                switch (windSpeedUnit)
+                {
+                    case "K": windSpeedValue = parser.KphToMps(windSpeed); break;
+                    case "N": windSpeedValue = parser.KnotsToMps(windSpeed); break;
+                    case "M": windSpeedValue = parser.StringToDouble(windSpeed); break;
+                    default: windSpeedValue = parser.StringToDouble(windSpeed); break;
+                }
                 yield return new TagWithData(windUnit, windSpeedValue);
             }
-        }
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
         }
     }
 }

@@ -1,12 +1,9 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using System;
-using System.Collections.Generic;
-using RaaLabs.TimeSeries.DataTypes;
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
+using System.Collections.Generic;
+
+namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
     /// <summary>
     /// Represents the format of "Depth of Water"
@@ -15,7 +12,8 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
     {
 
         /// <inheritdoc/>
-        public string Identitifer => "DPT";
+        public string Identitifer => "DPT";        
+        readonly Parser parser = new Parser();
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
@@ -24,15 +22,15 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
             var waterDepthRelativeToTransducer = values[0];
             var offsetFromTransducer = values[1];
 
-            if (ValidSentence(waterDepthRelativeToTransducer))
+            if (parser.ValidSentenceValue(waterDepthRelativeToTransducer))
             {
                 if (offsetFromTransducer.Contains("-"))
                 {
                     name = "DepthBelowKeel";
                 }
 
-                bool waterDepthParsed = float.TryParse(waterDepthRelativeToTransducer, out float waterDepth);
-                bool offsetParsed = float.TryParse(offsetFromTransducer, out float offset);
+                var waterDepthParsed = float.TryParse(waterDepthRelativeToTransducer, out float waterDepth);
+                var offsetParsed = float.TryParse(offsetFromTransducer, out float offset);
 
                 if (waterDepthParsed && offsetParsed)
                 {
@@ -40,13 +38,10 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
                 }
                 else
                 {
-                    throw new InvalidSentence($"DPT: Unable to parse '{waterDepthRelativeToTransducer}' and/or '{offsetFromTransducer}'");
+                    throw new InvalidSentenceException($"DPT: Unable to parse '{waterDepthRelativeToTransducer}' and/or '{offsetFromTransducer}'");
                 }
             }
         }
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
-        }
+     
     }
 }

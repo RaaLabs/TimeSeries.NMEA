@@ -2,8 +2,10 @@ name: .NET Core
 
 env:
   PRERELEASE_BRANCHES: experimental,alpha,beta,rc # Comma separated list of prerelease branch names. 'alpha,rc, ...'
-  DOCKER_HUB_REPO: shipos/timeseries-nmea #  The docker hub repo to push to
+  DOCKER_HUB_REPO: ${{ secrets.RAAEDGE_LOGIN_SERVER }}/connectors-nmea #  The docker hub repo to push to
   COVERAGE_FOLDER: Coverage
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
   push:
@@ -29,32 +31,25 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.x'
+        dotnet-version: '5.0.x'
     - name: Install dependencies
       run: dotnet restore --no-cache --verbosity normal
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test and report coverage
-      run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage.json /p:CoverletOutputFormat=\"opencover,json\" -m:1
+      run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage/ /p:CoverletOutputFormat=opencover
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    
-    - name: Login to DockerHub
-      uses: docker/login-action@v1
+    - name: 'Azure login'
+      uses: azure/docker-login@v1
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        login-server: ${{ secrets.RAAEDGE_LOGIN_SERVER }}
+        username: ${{ secrets.RAAEDGE_ACR_USERNAME }}
+        password: ${{ secrets.RAAEDGE_ACR_PASSWORD }}
 
-    - name: Build Docker image
-      uses: docker/build-push-action@v2
-      if: ${{ env.DOCKER_HUB_REPO != '' }}
-      with:
-        push: false
-        context: .
-        file: ./Source/Dockerfile
-        build-args: CONFIGURATION="Release"
-        no-cache: true
+    - name: Docker Build
+      shell: bash
+      run: |
+          docker build --no-cache -f $GITHUB_WORKSPACE/Source/Dockerfile -t ${{ env.DOCKER_HUB_REPO }}:${{ github.sha }} .
 
     - name: Establish context
       id: context
@@ -70,16 +65,11 @@ jobs:
         version: ${{ steps.context.outputs.current-version }}
         release-type: ${{ steps.context.outputs.release-type }}
 
-    - name: Push to Docker Hub
-      uses: docker/build-push-action@v2
+    - name: Docker push
       if: ${{ steps.context.outputs.should-publish == 'true' && env.DOCKER_HUB_REPO != '' }}
-      with:
-        push: true
-        context: .
-        file: ./Source/Dockerfile
-        build-args: CONFIGURATION="Release"
-        no-cache: true
-        tags: ${{ env.DOCKER_HUB_REPO }}:${{ steps.increment-version.outputs.next-version }}, ${{ env.DOCKER_HUB_REPO }}:latest
+      run: |
+          docker build --no-cache -f $GITHUB_WORKSPACE/Source/Dockerfile -t ${{ env.DOCKER_HUB_REPO }}:${{ steps.increment-version.outputs.next-version }} .
+          docker push ${{ env.DOCKER_HUB_REPO }}:${{ steps.increment-version.outputs.next-version }}
         
     - name: Create GitHub Release
       uses: dolittle/github-release-action@v1
@@ -87,10 +77,3 @@ jobs:
       with:
         cascading-release: ${{ steps.context.outputs.cascading-release }}
         version: ${{ steps.increment-version.outputs.next-version }}
-
-    - name: Upload coverage to CodeCov
-      if: ${{ steps.context.outputs.should-publish == 'true' }}
-      run: bash <(curl -s https://codecov.io/bash) -f "$FILE_PATH"
-      env:
-        FILE_PATH: ${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage.opencover.xml
-        

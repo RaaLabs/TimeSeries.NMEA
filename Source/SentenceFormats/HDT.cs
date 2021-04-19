@@ -1,11 +1,10 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using System.Collections.Generic;
-using RaaLabs.TimeSeries.DataTypes;
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
+using System.Collections.Generic;
+using System.Globalization;
+
+namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
     /// <summary>
     /// Represents the format of "Heading - True"
@@ -15,20 +14,13 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
 
         /// <inheritdoc/>
         public string Identitifer => "HDT";
+        readonly Parser parser = new Parser();
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
         {
-
             var headingTrue = values[0];
-
-            if (ValidSentence(headingTrue)) yield return new TagWithData("HeadingTrue", float.Parse(headingTrue));
-
-        }
-
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
+            if (parser.ValidSentenceValue(headingTrue)) yield return new TagWithData("HeadingTrue", parser.StringToDouble(headingTrue));
         }
     }
 }

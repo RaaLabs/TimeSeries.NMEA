@@ -1,78 +1,104 @@
-# NMEA
+# Connectors.NMEA
 
-![CI/CD](https://github.com/RaaLabs/IdentityMapper/workflows/.NET%20Core/badge.svg)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.NMEA&metric=coverage)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.NMEA)
 
-## Cloning
+This document describes the Connectors.NMEA module for RaaLabs Edge. For information regarding the specifics of NMEA check out [NMEA Revealed](https://gpsd.gitlab.io/gpsd/NMEA.html)
 
-This repository has sub modules, clone it with:
+## What does it do?
 
-```shell
-$ git clone --recursive <repository url>
+NMEA receives NMEA sentences over TCP or UDP streams. Sentences are parsed using the NMEA identifier, the supported NMEA identifiers can be found [here](https://github.com/RaaLabs/Connectors.NMEA/tree/master/Source/SentenceFormats).
+
+If a specific tag, e.g. SpeedOverGround, are produced from multiple NMEA talkers and identifiers it will be prioritized using the configuration [prioritized.json](https://github.com/RaaLabs/Connectors.NMEA/blob/master/Source/data/prioritized.json)
+
+The connector are producing events of type [OutputName("output")] and should be routed to [IdentityMapper](https://github.com/RaaLabs/IdentityMapper).
+
+## Configuration
+
+The module is configured using two json files. `connector.json` represents the connection to the TCP or UDP stream using IP and port.
+
+```json
+{
+    "ip": "127.0.0.1",
+    "port": 8888,
+    "protocol": 1
+}
 ```
 
-If you've already cloned it, you can get the submodules by doing the following:
+`prioritized.json` holds the priority for each NMEA tag concerning the  NMEA talker and identifier where the priority is indicated by the position in the list.
 
-```shell
-$ git submodule update --init --recursive
+```json
+{
+    "Latitude": {
+        "priority": ["GPGGA", "GPGLL", "GPGNS", "GPRMC", "GPRMA"],
+        "threshold": 60000
+    },
+    "Longitude": {
+        "priority": ["GPGGA", "GPGLL", "GPGNS", "GPRMC", "GPRMA"],
+        "threshold": 60000
+    },
+    "RateOfTurn": {
+        "priority": ["HEROT", "GPROT"],
+        "threshold": 60000
+    },
+    "SpeedThroughWater": {
+        "priority": ["VDVHW", "VDVBW", "GPVHW", "GPVBW", "VWVHW", "VWVBW"],
+        "threshold":00
+    },
+    "HeadingTrue": {
+        "priority": ["HEHDT", "HEVHW", "GPHDT", "GPVHW", "SDHDT", "SDVHW"],
+        "threshold": 60000
+    }
+}
 ```
 
-## Building
+## IoT Edge Deployment
 
-All the build things are from a submodule.
-To build, run one of the following:
-
-Windows:
-
-```shell
-$ Build\build.cmd
-```
-
-Linux / macOS
-
-```shell
-$ Build\build.sh
-```
-
-## Getting started
-
-This solution is built on top of [Azure IoT Edge](https://github.com/Azure/iotedge), and to be able to work locally and run it locally, you will need the development
-environment - read more about that [here](https://docs.microsoft.com/en-us/azure/iot-edge/development-environment).
-It mentions the use of the [iotedgedev](https://github.com/Azure/iotedgedev) tool.
-
-### VSCode
-
-If you are using VSCode or similar text editor, just open up the folder from the root. This solution uses a [sub-module](https://github.com/dolittle-tools/DotNET.Build) (as described above).
-It comes with a few things that makes development a little bit easier, a set of VSCode tasks as described [here](https://github.com/dolittle-tools/DotNET.Build#visual-studio-code-tasks).
-
-In addition to this there is a couple of Debug launch settings set up as well to enable debugging directly.
-
-### Visual Studio 201x
-
-Open up the [.sln](./KChief.sln) file at the root of the project.
-
-## Resources
-
-Based on documentation found here:
-
-- http://www.tronico.fi/OH6NT/docs/NMEA0183.pdf
-
-## Deploying
-
-### Module
+### $edgeAgent
 
 In your `deployment.json` file, you will need to add the module. For more details on modules in IoT Edge, go [here](https://docs.microsoft.com/en-us/azure/iot-edge/module-composition).
 
+The module has persistent state and it is assuming that this is in the `data` folder relative to where the binary is running.
+Since this is running in a containerized environment, the state is not persistent between runs. To get this state persistent, you'll
+need to configure the deployment to mount a folder on the host into the data folder.
+
+In your `deployment.json` file where you added the module, inside the `HostConfig` property, you should add the
+volume binding.
+
 ```json
-"modules": {
-    "RaaLabs.TimeSeries.NMEA": {
-    "version": "1.0",
-    "type": "docker",
-    "status": "running",
-    "restartPolicy": "always",
-    "settings": {
-        "image": "dolittle/timeseries-nmea",
-        "createOptions": {
-        "HostConfig": {}
+"Binds": [
+    "<mount-path>:/app/data"
+]
+```
+
+```json
+{
+    "modulesContent": {
+        "$edgeAgent": {
+            "properties.desired.modules.NMEA": {
+                "settings": {
+                    "image": "<repo-name>/connectors-nmea:<tag>",
+                    "createOptions": "{\"HostConfig\":{\"Binds\":[\"<mount-path>:/app/data\"]}}"
+                },
+                "type": "docker",
+                "version": "1.0",
+                "status": "running",
+                "restartPolicy": "always"
+            }
+        }
+    }
+}
+```
+
+For production setup, the bind mount can be replaced by a docker volume.
+
+### $edgeHub
+
+The routes in edgeHub can be specified like the example below.
+
+```json
+{
+    "$edgeHub": {
+        "properties.desired.routes.NMEAToIdentityMapper": "FROM /messages/modules/NMEA/outputs/output INTO BrokeredEndpoint(\"/modules/IdentityMapper/inputs/events\")",
     }
 }
 ```

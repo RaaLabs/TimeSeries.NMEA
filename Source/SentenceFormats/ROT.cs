@@ -1,11 +1,9 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) RaaLabs. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-using System.Collections.Generic;
-using RaaLabs.TimeSeries.DataTypes;
+// Copyright (c) RaaLabs. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
+using System.Collections.Generic;
+
+namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
     /// <summary>
     /// Represents the format of "Rate Of Turn"
@@ -15,19 +13,13 @@ namespace RaaLabs.TimeSeries.NMEA.SentenceFormats
 
         /// <inheritdoc/>
         public string Identitifer => "ROT";
+        readonly Parser parser = new Parser();
 
         /// <inheritdoc/>
         public IEnumerable<TagWithData> Parse(string[] values)
         {
-
             var rateOfTurn = values[0];
-
-            if (ValidSentence(rateOfTurn)) yield return new TagWithData("RateOfTurn", float.Parse(rateOfTurn));
-        }
-
-        private bool ValidSentence(string value)
-        {
-            return !string.IsNullOrEmpty(value);
+            if (parser.ValidSentenceValue(rateOfTurn)) yield return new TagWithData("RateOfTurn", parser.StringToDouble(rateOfTurn));
         }
     }
 }
