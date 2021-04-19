@@ -24,7 +24,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.Events
             Sentence = sentence;
         }
         /// <summary>
-        /// 
+        /// NMEA sentence
         /// </summary>
         /// <param name="sentence"></param>
         public static implicit operator NMEASentenceReceived(string sentence) => new NMEASentenceReceived(sentence);
