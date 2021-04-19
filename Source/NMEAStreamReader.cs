@@ -12,7 +12,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
     /// <summary>
     /// 
     /// </summary>
-    public class NMEAStreamReader
+    static class NMEAStreamReader
     {
         /// <summary>
         /// 
