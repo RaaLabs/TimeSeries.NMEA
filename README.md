@@ -1,5 +1,6 @@
 # Connectors.NMEA
-
+[![.NET 5.0](https://github.com/RaaLabs/Connectors.NMEA/actions/workflows/dotnet-core.yml/badge.svg)](https://github.com/RaaLabs/Connectors.NMEA/actions/workflows/dotnet-core.yml)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.NMEA&metric=sqale_rating&token=8897be6a6a24c254c635617801e86f08e68dd19f)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.NMEA)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Connectors.NMEA&metric=coverage)](https://sonarcloud.io/dashboard?id=RaaLabs_Connectors.NMEA)
 
 This document describes the Connectors.NMEA module for RaaLabs Edge. For information regarding the specifics of NMEA check out [NMEA Revealed](https://gpsd.gitlab.io/gpsd/NMEA.html)
