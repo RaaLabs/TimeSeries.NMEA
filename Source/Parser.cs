@@ -23,21 +23,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
         public IEnumerable<TagWithData> ParsePosition(string latitude, string longitude, string cardinalDirectionX, string cardinalDirectionY)
         {
-
-            if (ValidSentenceValue(latitude) && ValidSentenceValue(cardinalDirectionY))
-            {
-                var latitudeDeg = ConvertToDegree(latitude);
-                if (cardinalDirectionY == "S") latitudeDeg = -latitudeDeg;
-                yield return new TagWithData("Latitude", latitudeDeg);
-
-            }
-            if (ValidSentenceValue(longitude) && ValidSentenceValue(cardinalDirectionX))
-            {
-                var longitudeDeg = ConvertToDegree(longitude);
-                if (cardinalDirectionX == "W") longitudeDeg = -longitudeDeg;
-                yield return new TagWithData("Longitude", longitudeDeg);
-            }
-
+            
             if (ValidSentenceValue(latitude) && ValidSentenceValue(cardinalDirectionY) && ValidSentenceValue(longitude) && ValidSentenceValue(cardinalDirectionX))
             {
                 var latitudeDeg = ConvertToDegree(latitude);
@@ -45,6 +31,8 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
                 if (cardinalDirectionY == "S") latitudeDeg = -latitudeDeg;
                 if (cardinalDirectionX == "W") longitudeDeg = -longitudeDeg;
+                yield return new TagWithData("Latitude", latitudeDeg);
+                yield return new TagWithData("Longitude", longitudeDeg);
                 yield return new TagWithData("Position", new Coordinate(latitudeDeg, longitudeDeg));
             }
         }
@@ -103,7 +91,5 @@ namespace RaaLabs.Edge.Connectors.NMEA
         {
             return !string.IsNullOrEmpty(value);
         }
-
-
     }
 }
