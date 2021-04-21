@@ -5,6 +5,7 @@ using Polly;
 using RaaLabs.Edge.Modules.EventHandling;
 using Serilog;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -15,8 +16,9 @@ using System.Threading.Tasks;
 namespace RaaLabs.Edge.Connectors.NMEA
 {
     /// <summary>
-    /// 
+    /// Represents a TCP or UDP connector type that connects and streams data from the source
     /// </summary>
+    [ExcludeFromCodeCoverage] // Covered by integration tests
     public class Connector : IRunAsync, IProduceEvent<Events.NMEASentenceReceived>
     {
         /// <inheritdoc/>
