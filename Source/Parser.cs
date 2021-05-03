@@ -13,7 +13,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
     {
   
         /// <summary>
-        /// 
+        /// Helper function for parsing position data
         /// </summary>
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>

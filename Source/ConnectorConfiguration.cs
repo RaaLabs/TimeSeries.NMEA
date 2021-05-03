@@ -11,6 +11,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
     /// </summary>
     [ExcludeFromCodeCoverage] // Do not need to test configuration
     [Name("connector.json")]
+    [RestartOnChange]
     public class ConnectorConfiguration : IConfiguration
     {
         /// <summary>
