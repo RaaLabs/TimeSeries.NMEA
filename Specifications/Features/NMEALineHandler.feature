@@ -126,6 +126,3 @@ Feature: NMEALineHandler
             | VDVHW  | HeadingTrue       | 119.9   |
             | VDVHW  | HeadingMagnetic   | 120.1   |
             | VDVHW  | SpeedThroughWater | 3.99208 |
-
-
-

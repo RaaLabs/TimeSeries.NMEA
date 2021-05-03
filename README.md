@@ -62,8 +62,7 @@ The module has persistent state and it is assuming that this is in the `data` fo
 Since this is running in a containerized environment, the state is not persistent between runs. To get this state persistent, you'll
 need to configure the deployment to mount a folder on the host into the data folder.
 
-In your `deployment.json` file where you added the module, inside the `HostConfig` property, you should add the
-volume binding.
+In your `deployment.json` file where you added the module, inside the `HostConfig` property, you should add the volume binding.
 
 ```json
 "Binds": [
