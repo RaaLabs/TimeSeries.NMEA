@@ -85,10 +85,10 @@ namespace RaaLabs.Edge.Connectors.NMEA
                 _state[tag] = measurement;
                 var output = new Events.NMEADatapointOutput
                 {
-                    source = "NMEA",
-                    tag = @event.tag,
-                    timestamp = @event.timestamp,
-                    value = @event.value
+                    Source = "NMEA",
+                    Tag = @event.tag,
+                    Timestamp = @event.timestamp,
+                    Value = @event.value
                 };
                 SendDatapoint(output);
             }

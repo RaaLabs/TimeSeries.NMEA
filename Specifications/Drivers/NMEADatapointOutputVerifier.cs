@@ -9,10 +9,10 @@ namespace RaaLabs.Edge.Connectors.NMEA.Specs.Drivers
     {
         public void VerifyFromTableRow(NMEADatapointOutput @event, TableRow row)
         {
-            float actualValue = @event.value;
+            float actualValue = @event.Value;
             var expectedValue = float.Parse(row["Value"], CultureInfo.InvariantCulture.NumberFormat);
-            @event.source.Should().Be("NMEA");
-            @event.tag.Should().Be(row["Tag"]);
+            @event.Source.Should().Be("NMEA");
+            @event.Tag.Should().Be(row["Tag"]);
             actualValue.Should().BeApproximately(expectedValue, 0.0001f);
         }
     }
