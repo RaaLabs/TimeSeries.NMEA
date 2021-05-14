@@ -54,10 +54,10 @@ Feature: NMEALineHandler
             | $GPRMC,050318.004,A,5954.110,S,01043.074,E,038.9,241.4,090920,000.0,W*67 |
 
         Then the following events of type EventParsed is produced
-            | Talker | Tag             | Value                                     |
-            | GPRMC  | SpeedOverGround | 20.01189                                  |
-            | GPRMC  | Latitude        | -59.901833                                |
-            | GPRMC  | Longitude       | 10.7179                                   |
+            | Talker | Tag             | Value                                      |
+            | GPRMC  | SpeedOverGround | 20.01189                                   |
+            | GPRMC  | Latitude        | -59.901833                                 |
+            | GPRMC  | Longitude       | 10.7179                                    |
             | GPRMC  | Position        | {Latitude: -59.901833, Longitude: 10.7179} |
 
     Scenario: Handling incoming HDT events
@@ -126,3 +126,38 @@ Feature: NMEALineHandler
             | VDVHW  | HeadingTrue       | 119.9   |
             | VDVHW  | HeadingMagnetic   | 120.1   |
             | VDVHW  | SpeedThroughWater | 3.99208 |
+
+    Scenario: Handling incoming GLL events with missing checksum
+        When the following events of type NMEASentenceReceived is produced
+            | sentence                                    |
+            | $GPGLL,4041.482,S,07408.271,E,114757.00,A,A |
+
+        Then the following events of type EventParsed is produced
+            | Talker | Tag       | Value                                    |
+            | GPGLL  | Latitude  | -40.6913                                 |
+            | GPGLL  | Longitude | 74.1378                                  |
+            | GPRMC  | Position  | {Latitude: -40.6913, Longitude: 74.1378} |
+
+    Scenario: Handling incoming position events with missing Latitude
+        When the following events of type NMEASentenceReceived is produced
+            | sentence                           |
+            | $GPGLL,,,07408.271,E,114757.00,A,A |
+        Then the following events of type EventParsed is produced
+            | Talker | Tag | Value |
+
+    Scenario: Handling incoming position events with missing Longitude
+        When the following events of type NMEASentenceReceived is produced
+            | sentence                          |
+            | $GPGLL,4041.482,S,,,114757.00,A,A |
+
+        Then the following events of type EventParsed is produced
+            | Talker | Tag | Value |
+
+    Scenario: Handling incoming position events with missing Longitude. However it contains other valid values
+        When the following events of type NMEASentenceReceived is produced
+            | sentence                                                             |
+            | $GPRMC,050318.004,A,5954.110,S,,,038.9,241.4,090920,000.0,W |
+
+        Then the following events of type EventParsed is produced
+            | Talker | Tag             | Value    |
+            | GPRMC  | SpeedOverGround | 20.01189 |
