@@ -50,10 +50,10 @@ namespace RaaLabs.Edge.Connectors.NMEA
                     {
                         var output = new Events.EventParsed
                         {
-                            talker = identifier,
-                            tag = tag.Tag,
-                            timestamp = timestamp,
-                            value = tag.Data
+                            Talker = identifier,
+                            Tag = tag.Tag,
+                            Timestamp = timestamp,
+                            Value = tag.Data
                         };
                         EventParsed(output);
                     });

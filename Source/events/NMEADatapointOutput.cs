@@ -14,22 +14,22 @@ namespace RaaLabs.Edge.Connectors.NMEA.Events
         /// <summary>
         /// Represents the Source system.
         /// </summary>
-        public string source { get; set; }
+        public string Source { get; set; }
 
         /// <summary>
         /// Gets or sets the tag. Represens the sensor name from the source system.
         /// </summary>
-        public string tag { get; set; }
+        public string Tag { get; set; }
 
         /// <summary>
         /// Gets or sets the value
         /// </summary>
-        public dynamic value { get; set; }
+        public dynamic Value { get; set; }
 
         /// <summary>
         /// Gets or sets the timestamp in the form of EPOCH milliseconds granularity
         /// </summary>
-        public long timestamp { get; set; }
+        public long Timestamp { get; set; }
 
     }
 }

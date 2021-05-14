@@ -93,18 +93,6 @@ namespace RaaLabs.Edge.Connectors.NMEA
         }
 
         /// <summary>
-        /// Wrapper function for float.Parse
-        /// </summary>
-        /// <param name="value">string value from NMEA tag</param>
-        /// <returns>
-        /// float value
-        /// </returns>
-        public float FloatParse(string value)
-        {
-            return float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        /// <summary>
         /// Check if sentence is valid. Sentence should start with $ and should contain 6 char.
         /// </summary>
         /// <param name="sentence"></param>
