@@ -13,21 +13,21 @@ namespace RaaLabs.Edge.Connectors.NMEA.Events
         /// <summary>
         /// Represents the NMEA talker. 
         /// </summary>
-        public string talker {get; set; }
+        public string Talker {get; set; }
 
         /// <summary>
         /// Represents the NMEA tag name
         /// </summary>
-        public string tag { get; set; }
+        public string Tag { get; set; }
 
         /// <summary>
         /// Represents the value for the NMEA tag
         /// </summary>
-        public dynamic  value { get; set; }
+        public dynamic Value { get; set; }
 
         /// <summary>
         /// Represents the timestamp for the NMEA tag in epoc
         /// </summary>
-        public long timestamp { get; set; }
+        public long Timestamp { get; set; }
     }
 }

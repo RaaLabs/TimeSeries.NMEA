@@ -15,14 +15,13 @@ namespace RaaLabs.Edge.Connectors.NMEA.Events
         /// gets and sets the NMEA sentence. 
         /// </summary>
         public string Sentence { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sentence"></param>
+
+        /// <inheritdoc/>
         public NMEASentenceReceived(string sentence)
         {
             Sentence = sentence;
         }
+        
         /// <summary>
         /// NMEA sentence
         /// </summary>

@@ -43,14 +43,14 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// </summary>
         public void Handle(Events.EventParsed @event)
         {
-            var tagWithTalker = $"{@event.tag}.{@event.talker}";
-            var tag = @event.tag;
+            var tagWithTalker = $"{@event.Tag}.{@event.Talker}";
+            var tag = @event.Tag;
 
             var measurement = new Measurement
             {
-                tag = @event.tag,
-                value = @event.value,
-                timestamp = @event.timestamp,
+                tag = @event.Tag,
+                value = @event.Value,
+                timestamp = @event.Timestamp,
                 source = tagWithTalker
             };
 
@@ -64,7 +64,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
             var thisPriority = _prioritiesForFullTags.GetValueOrDefault(tagWithTalker, int.MaxValue);
             var hasHigherPriority = thisPriority <= currentPriority;
             var hasPriorityChanged = thisPriority != currentPriority;
-            var currentStateStale = (@event.timestamp - currentTimestamp) > timeout;
+            var currentStateStale = (@event.Timestamp - currentTimestamp) > timeout;
             var shouldSetState = !hasCurrentState || hasHigherPriority || currentStateStale;
 
             var hasOverlappingTalkersWithoutPriority = thisPriority == int.MaxValue && hasCurrentState && !tagWithTalker.Equals(currentState.source);
@@ -77,7 +77,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
             if (hasPriorityChanged && shouldSetState && !string.IsNullOrEmpty(currentState?.source))
             {
                 var currentTalker = currentState.source.Split(".").LastOrDefault();
-                _logger.Warning($"{@event.tag} changed priority from {currentTalker} to {@event.talker}");
+                _logger.Warning($"{@event.Tag} changed priority from {currentTalker} to {@event.Talker}");
             }
 
             if (shouldSetState)
@@ -86,9 +86,9 @@ namespace RaaLabs.Edge.Connectors.NMEA
                 var output = new Events.NMEADatapointOutput
                 {
                     Source = "NMEA",
-                    Tag = @event.tag,
-                    Timestamp = @event.timestamp,
-                    Value = @event.value
+                    Tag = @event.Tag,
+                    Timestamp = @event.Timestamp,
+                    Value = @event.Value
                 };
                 SendDatapoint(output);
             }
