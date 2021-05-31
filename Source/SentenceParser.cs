@@ -86,7 +86,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
                 sentence = sentence.Substring(1);
             }
 
-            var values = sentence.Substring(6).Split(',');
+            var values = sentence.Substring(6).Split('*').FirstOrDefault().Split(',');
             var result = _formats[identifier].Parse(values);
 
             return result;
