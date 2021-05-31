@@ -50,7 +50,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         {
             while (true)
             {
-                _logger.Information("Setting up TCP connector");
+                _logger.Information($"Setting up {_configuration.Protocol} connector");
                 var policy = Policy
                     .Handle<Exception>()
                     .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt),3600)),
