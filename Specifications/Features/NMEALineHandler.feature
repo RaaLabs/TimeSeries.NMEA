@@ -5,11 +5,25 @@ Feature: NMEALineHandler
 
     Scenario: Handling incoming DPT events
         When the following events of type NMEASentenceReceived is produced
-            | sentence               |
-            | $SDDPT,5.2,0.0,10.0*63 |
+            | sentence                 |
+            | $SDDPT,5.2,0.0,10.0*63   |
+            | $SDDPT,0002.8,0010.8*54  |
+            | $SDDPT,0022.9,-0010.8*7A |
         Then the following events of type EventParsed is produced
-            | Talker | Tag        | Value |
-            | SDDPT  | WaterDepth | 5.2   |
+            | Talker | Tag            | Value |
+            | SDDPT  | WaterDepth     | 5.2   |
+            | SDDPT  | WaterDepth     | 13.6  |
+            | SDDPT  | DepthBelowKeel | 12.1  |
+
+    Scenario: Handling incoming DPT events with missing values
+        When the following events of type NMEASentenceReceived is produced
+            | sentence           |
+            | $SDDPT,0022.9,*40  |
+            | $SDDPT,,-0010.8*6D |
+            | $SDDPT,,*57 |
+        Then the following events of type EventParsed is produced
+            | Talker | Tag | Value |
+
 
     Scenario: Handling incoming GGA events
         When the following events of type NMEASentenceReceived is produced
@@ -155,7 +169,7 @@ Feature: NMEALineHandler
 
     Scenario: Handling incoming position events with missing Longitude. However it contains other valid values
         When the following events of type NMEASentenceReceived is produced
-            | sentence                                                             |
+            | sentence                                                    |
             | $GPRMC,050318.004,A,5954.110,S,,,038.9,241.4,090920,000.0,W |
 
         Then the following events of type EventParsed is produced
