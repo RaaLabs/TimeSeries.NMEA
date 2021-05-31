@@ -12,7 +12,7 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
     {
 
         /// <inheritdoc/>
-        public string Identitifer => "DPT";        
+        public string Identitifer => "DPT";
         readonly Parser parser = new Parser();
 
         /// <inheritdoc/>
@@ -29,11 +29,10 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                     name = "DepthBelowKeel";
                 }
 
-                var waterDepthParsed = float.TryParse(waterDepthRelativeToTransducer, out float waterDepth);
-                var offsetParsed = float.TryParse(offsetFromTransducer, out float offset);
-
-                if (waterDepthParsed && offsetParsed)
+                if (parser.ValidSentenceValue(waterDepthRelativeToTransducer) && parser.ValidSentenceValue(offsetFromTransducer))
                 {
+                    var waterDepth = parser.StringToDouble(waterDepthRelativeToTransducer);
+                    var offset = parser.StringToDouble(offsetFromTransducer);
                     yield return new TagWithData(name, waterDepth + offset);
                 }
                 else
@@ -42,6 +41,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                 }
             }
         }
-     
+
     }
 }
