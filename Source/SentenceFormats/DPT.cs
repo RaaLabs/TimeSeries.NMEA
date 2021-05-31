@@ -35,10 +35,6 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
                     var offset = parser.StringToDouble(offsetFromTransducer);
                     yield return new TagWithData(name, waterDepth + offset);
                 }
-                else
-                {
-                    throw new InvalidSentenceException($"DPT: Unable to parse '{waterDepthRelativeToTransducer}' and/or '{offsetFromTransducer}'");
-                }
             }
         }
 
