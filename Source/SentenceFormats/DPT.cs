@@ -22,19 +22,16 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
             var waterDepthRelativeToTransducer = values[0];
             var offsetFromTransducer = values[1];
 
-            if (parser.ValidSentenceValue(waterDepthRelativeToTransducer))
+            if (parser.ValidSentenceValue(waterDepthRelativeToTransducer) && parser.ValidSentenceValue(offsetFromTransducer))
             {
                 if (offsetFromTransducer.Contains("-"))
                 {
                     name = "DepthBelowKeel";
                 }
 
-                if (parser.ValidSentenceValue(waterDepthRelativeToTransducer) && parser.ValidSentenceValue(offsetFromTransducer))
-                {
-                    var waterDepth = parser.StringToDouble(waterDepthRelativeToTransducer);
-                    var offset = parser.StringToDouble(offsetFromTransducer);
-                    yield return new TagWithData(name, waterDepth + offset);
-                }
+                var waterDepth = parser.StringToDouble(waterDepthRelativeToTransducer);
+                var offset = parser.StringToDouble(offsetFromTransducer);
+                yield return new TagWithData(name, waterDepth + offset);
             }
         }
 
