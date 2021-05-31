@@ -20,6 +20,7 @@ Feature: NMEALineHandler
             | sentence           |
             | $SDDPT,0022.9,*40  |
             | $SDDPT,,-0010.8*6D |
+            | $SDDPT,,*57 |
         Then the following events of type EventParsed is produced
             | Talker | Tag | Value |
 
