@@ -38,7 +38,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         {
             if (!IsValidSentence(sentence)) return false;
             sentence = sentence.Substring(1);
-            var identifier = sentence.Substring(2, 3);
+            var identifier = sentence.Split("$").LastOrDefault().Substring(2).Split(",").FirstOrDefault();
             if (!_formats.ContainsKey(identifier))
             {
                 _logger.Information($"Identifier '{identifier}' is not supported, can not parse {sentence}");
@@ -54,7 +54,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
         public string GetIdentifierFor(string sentence)
         {
             ThrowIfSentenceIsInvalid(sentence);
-            return sentence.Substring(1, 5);
+            return sentence.Split("$").LastOrDefault().Split(",").FirstOrDefault();
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace RaaLabs.Edge.Connectors.NMEA
             ThrowIfSentenceIsInvalid(sentence);
             var originalSentence = sentence;
 
-            var formatIdentifier = sentence.Substring(1, 5);
+            var formatIdentifier = sentence.Split("$").LastOrDefault().Split(",").FirstOrDefault();
             var talker = formatIdentifier.Substring(0, 2);
             var identifier = formatIdentifier.Substring(2);
             ThrowIfUnsupportedSentence(originalSentence, talker, identifier);
@@ -79,14 +79,14 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
                 byte calculatedChecksum = 0;
                 for (var i = 0; i < sentence.Length; i++) calculatedChecksum ^= (byte)sentence[i];
-                ThrowIfSentenceChecksumIsInvalid(sentence, checksum, calculatedChecksum);
+                ThrowIfSentenceChecksumIsInvalid(originalSentence, checksum, calculatedChecksum);
             }
             else
             {
                 sentence = sentence.Substring(1);
             }
 
-            var values = sentence.Substring(6).Split('*').FirstOrDefault().Split(',');
+            var values = sentence.Split(formatIdentifier).LastOrDefault().Substring(1).Split('*').FirstOrDefault().Split(',');
             var result = _formats[identifier].Parse(values);
 
             return result;
