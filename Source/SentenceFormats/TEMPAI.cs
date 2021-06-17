@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
 {
     /// <summary> 
-    /// Represents the format of "Recommended Minimum Navigation Information"
+    /// Represents the format of vender specific NMEA sentences for Veinland DCU32
     /// </summary>
     public class TEMPAI : ISentenceFormat
     {
