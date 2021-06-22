@@ -5,13 +5,13 @@ Feature: ProprietaryNMEASentences
 
     Scenario: Handling incoming _00CT events
         When the following events of type NMEASentenceReceived is produced
-            | sentence                     |
-            | $PV00CT,03,0.0,3500.0,2000.0 |
+            | sentence                                               |
+            | $PV00CT,1BC7DD3,1993F218,0,1062A793,0,3119015,0,0,0*01 |
         Then the following events of type EventParsed is produced
-            | Talker | Tag              | Value  |
-            | PV00CT | FlowMainEngineIn | 0.0    |
-            | PV00CT | FlowAuxEngineIn  | 3500.0 |
-            | PV00CT | FlowBoilerIn     | 2000.0 |
+            | Talker | Tag              | Value     |
+            | PV00CT | FlowMainEngineIn | 429126168 |
+            | PV00CT | FlowAuxEngineIn  | 274900883 |
+            | PV00CT | FlowBoilerIn     | 51482645  |
 
     Scenario: Handling incoming TEMPAI events
         When the following events of type NMEASentenceReceived is produced
