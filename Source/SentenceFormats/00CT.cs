@@ -18,13 +18,25 @@ namespace RaaLabs.Edge.Connectors.NMEA.SentenceFormats
         public IEnumerable<TagWithData> Parse(string[] values)
         {
             var flowMainEngineIn = values[1];
-            var flowAuxEngineIn = values[2];
-            var flowBoilerIn = values[3];
+            var flowAuxEngineIn = values[3];
+            var flowBoilerIn = values[5];
 
+            if (parser.ValidSentenceValue(flowMainEngineIn))
+            {
+                var parsedFlowMainEngineIn = int.Parse(flowMainEngineIn, System.Globalization.NumberStyles.HexNumber);
+                yield return new TagWithData("FlowMainEngineIn",  (float) parsedFlowMainEngineIn);
+            } 
+            if (parser.ValidSentenceValue(flowAuxEngineIn)) 
+            {
+                var parsedFlowAuxEngineIn = int.Parse(flowAuxEngineIn, System.Globalization.NumberStyles.HexNumber);
+                yield return new TagWithData("FlowAuxEngineIn",  (float) parsedFlowAuxEngineIn);
+            }
 
-            if (parser.ValidSentenceValue(flowMainEngineIn)) yield return new TagWithData("FlowMainEngineIn",  parser.StringToDouble(flowMainEngineIn));
-            if (parser.ValidSentenceValue(flowAuxEngineIn)) yield return new TagWithData("FlowAuxEngineIn",  parser.StringToDouble(flowAuxEngineIn));
-            if (parser.ValidSentenceValue(flowBoilerIn)) yield return new TagWithData("FlowBoilerIn",  parser.StringToDouble(flowBoilerIn));
+            if (parser.ValidSentenceValue(flowBoilerIn))
+            {
+                var parsedFlowBoilerIn = int.Parse(flowBoilerIn, System.Globalization.NumberStyles.HexNumber);
+                yield return new TagWithData("FlowBoilerIn",  (float) parsedFlowBoilerIn);
+            } 
 
         }
       
