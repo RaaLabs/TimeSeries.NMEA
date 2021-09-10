@@ -48,100 +48,68 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// </returns>
         public async Task Run()
         {
-            while (true)
-            {
-                _logger.Information($"Setting up {_configuration.Protocol} connector");
-                var policy = Policy
-                    .Handle<Exception>()
-                    .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt),3600)),
-                    (exception, timeSpan, context) =>
-                    {
-                        _logger.Error(exception, $"NMEA connector threw an exception during connect - retrying");
-                    });
+            _logger.Information($"Setting up {_configuration.Protocol} connector");
 
-                switch (_configuration.Protocol)
+            var retryOnClosedConnection = Policy
+                .Handle<Exception>()
+                .RetryForeverAsync(ex =>
                 {
-                    case Protocol.Tcp: await policy.ExecuteAsync(async () => { await TcpConnect(); }); break;
-                    case Protocol.Udp: await policy.ExecuteAsync(async () => { await ConnectUdp(); }); break;
-                    default: _logger.Error("Protocol not defined"); break;
-                }
-                await Task.Delay(1000);
+                    _logger.Error(ex, "NMEA connection threw exception. Restarting connection.");
+                });
+
+            var retryUntilConnected = Policy
+                .Handle<SocketException>()
+                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt), 3600)),
+                (exception, retryAttempt, context) =>
+                {
+                    var nextRetry = Math.Min(Math.Pow(2, retryAttempt), 3600);
+                    _logger.Error(exception, "NMEA connector threw an exception during connect - retrying in {Timespan} seconds", nextRetry);
+                });
+
+            var policy = Policy.WrapAsync(retryOnClosedConnection, retryUntilConnected);
+
+            switch (_configuration.Protocol)
+            {
+                case Protocol.Tcp: await policy.ExecuteAsync(async () => { await TcpConnect(); }); break;
+                case Protocol.Udp: await policy.ExecuteAsync(async () => { await ConnectUdp(); }); break;
+                default: _logger.Error("Protocol not defined"); break;
             }
         }
 
         private async Task TcpConnect()
         {
-            IPAddress address = IPAddress.Parse(_configuration.Ip);
+            _logger.Information("Connecting to TCP stream");
+            var address = IPAddress.Parse(_configuration.Ip);
             var port = _configuration.Port;
 
-            Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(address, port);
 
-            using (var stream = new NetworkStream(socket, FileAccess.Read, true))
+            using var stream = new NetworkStream(socket, FileAccess.Read, true);
+            var reader = NMEAStreamReader.ReadLineAsync(stream, TimeSpan.FromSeconds(3));
+            try
             {
-                stream.ReadTimeout = 30_000;
-                var reader = NMEAStreamReader.ReadLineAsync(stream).GetAsyncEnumerator();
-                try
+                await foreach (var sentence in reader)
                 {
-                    while (true)
-                    {
-                        await DoWithTimeout(reader.MoveNextAsync(), 3_000);
-                        var sentence = reader.Current;
-                        NMEASentenceReceived(sentence);
-                    }
+                    NMEASentenceReceived(sentence);
                 }
-                finally
-                {
-                    _logger.Information("Done reading TCP stream");
-                    socket.Close();
-                }
+            }
+            finally
+            {
+                _logger.Information("Done reading TCP stream");
+                socket.Close();
             }
         }
 
         private async Task ConnectUdp()
         {
+            using var udpClient = new UdpClient(_configuration.Port);
+
             while (true)
             {
-                try
-                {
-                    using (var udpClient = new UdpClient(_configuration.Port))
-                    {
-                        try
-                        {
-                            while (true)
-                            {
-                                var receivedResult = await udpClient.ReceiveAsync();
-                                var sentence = Encoding.ASCII.GetString(receivedResult.Buffer);
-                                NMEASentenceReceived(sentence);
-                            }
-                        }
-                        catch (SocketException ex)
-                        {
-                            _logger.Error(ex, $"Trouble connecting to socket");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error(ex, "Error while connecting to UDP stream");
-                    Thread.Sleep(2000);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Helper method that can handle timeout for ValueTasks.
-        /// </summary>
-        async ValueTask<T> DoWithTimeout<T>(ValueTask<T> valueTask, int timeout)
-        {
-            var task = valueTask.AsTask();
-            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
-            {
-                return await task;
-            }
-            else
-            {
-                throw new OperationCanceledException();
+                var receivedResult = await udpClient.ReceiveAsync();
+                var sentence = Encoding.ASCII.GetString(receivedResult.Buffer);
+                NMEASentenceReceived(sentence);
             }
         }
     }

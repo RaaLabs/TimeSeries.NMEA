@@ -59,9 +59,9 @@ namespace RaaLabs.Edge.Connectors.NMEA
                     });
                 }
             }
-            catch (FormatException ex)
+            catch (Exception ex)
             {
-                _logger.Error(ex, $"Trouble parsing  {@event}");
+                _logger.Error(ex, "Trouble parsing {event}", @event);
             }
         }
     }
