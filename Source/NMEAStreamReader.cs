@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace RaaLabs.Edge.Connectors.NMEA
 {
@@ -18,19 +19,22 @@ namespace RaaLabs.Edge.Connectors.NMEA
         /// 
         /// </summary>
         /// <param name="stream"></param>
+        /// <param name="timeout"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<string> ReadLineAsync(Stream stream)
+        public static async IAsyncEnumerable<string> ReadLineAsync(Stream stream, TimeSpan? timeout = null)
         {
-            List<byte> line = new List<byte>();
-            var byteStreamEnumerator = ReadAsync(stream).GetAsyncEnumerator();
+            var line = new List<byte>();
+            var byteStreamEnumerator = ReadAsync(stream, timeout).GetAsyncEnumerator();
             while (true)
             {
                 while (await byteStreamEnumerator.MoveNextAsync())
+                {
                     if (IsStartByte(byteStreamEnumerator.Current))
                     {
                         line.Add(byteStreamEnumerator.Current);
                         break;
                     }
+                }
 
                 while (await byteStreamEnumerator.MoveNextAsync())
                 {
@@ -44,13 +48,15 @@ namespace RaaLabs.Edge.Connectors.NMEA
             }
         }
 
-        private static async IAsyncEnumerable<byte> ReadAsync(Stream stream)
+        private static async IAsyncEnumerable<byte> ReadAsync(Stream stream, TimeSpan? timeout = null)
         {
-            byte[] buffer = new byte[1024];
+            var buffer = new byte[1024];
 
             while (true)
             {
-                var size = await stream.ReadAsync(buffer.AsMemory(0, 1024));
+                var cancelToken = new CancellationTokenSource();
+                cancelToken.CancelAfter(timeout ?? TimeSpan.FromSeconds(3));
+                var size = await stream.ReadAsync(buffer.AsMemory(0, 1024), cancelToken.Token);
 
                 foreach (var i in Enumerable.Range(0, size))
                 {
