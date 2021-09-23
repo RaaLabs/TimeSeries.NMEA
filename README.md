@@ -19,6 +19,7 @@ The connector are producing events of type [OutputName("output")] and should be 
 The module is configured using two json files. `connector.json` represents the connection to the TCP or UDP stream using IP and port.
 
 ```json
+// connector.json
 {
     "ip": "127.0.0.1",
     "port": 8888,
@@ -29,6 +30,7 @@ The module is configured using two json files. `connector.json` represents the c
 `prioritized.json` holds the priority for each NMEA tag concerning the  NMEA talker and identifier where the priority is indicated by the position in the list.
 
 ```json
+// prioritized.json
 {
     "Latitude": {
         "priority": ["GPGGA", "GPGLL", "GPGNS", "GPRMC", "GPRMA"],
