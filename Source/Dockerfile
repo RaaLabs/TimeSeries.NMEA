@@ -15,6 +15,7 @@ FROM mcr.microsoft.com/dotnet/runtime:5.0-alpine3.13
 WORKDIR /app
 COPY --from=build-env /app/Source/out ./
 COPY --from=build-env /app/Source/data ./data
+COPY --from=build-env /app/Source/config ./config
 
 RUN adduser -Ds /bin/sh moduleuser	
 
