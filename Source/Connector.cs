@@ -52,9 +52,10 @@ namespace RaaLabs.Edge.Connectors.NMEA
 
             var retryOnClosedConnection = Policy
                 .Handle<Exception>()
-                .RetryForeverAsync(ex =>
+                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(1),
+                (exception, retryAttempt, context) =>
                 {
-                    _logger.Error(ex, "NMEA connection threw exception. Restarting connection.");
+                    _logger.Error(exception, "NMEA connection threw exception. Restarting connection - retrying in 1 second.");
                 });
 
             var retryUntilConnected = Policy
